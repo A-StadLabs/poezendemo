@@ -136,6 +136,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <iron-localstorage name="baasje" value="{{baasjenaam}}"></iron-localstorage>
 
+      <iron-localstorage name="mypoescontract" value="{{poescontract}}"></iron-localstorage>
+
+      <iron-localstorage name="memberstatus" value="{{memberstatus}}"></iron-localstorage>
+
       <lo-mqtt connected="{{mqttconnected}}" subs
   on-message-received="msgreceived"
   on-mqtt-connected="mqttconnectedfire"
@@ -146,8 +150,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </poes-contract>
 
     <alabs-web3js on-web3-ready="_web3_ready" id="web3" web3="{{web3}}" accounts="{{accounts}}" account="{{account}}" contract="{{contract}}" balance="{{balance}}" connected="{{web3connected}}" provider="http://Bv61.ma.cx:8545"></alabs-web3js>
-
-
 
     <div class="container">
 
@@ -190,9 +192,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
-
-
-
       <neon-animatable>
         <div class="canvas">
             <small>Toon deze pincode aan aspirant-lid van de poezenclub</small>
@@ -200,8 +199,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!--           <paper-button on-tap="receivedPin">OK</paper-button>
  -->        </div>
       </neon-animatable>
- 
-
 
       <neon-animatable>
         <div class="biggercanvas">
@@ -223,7 +220,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <neon-animatable>
         <div class="biggercanvas">
-
           <div>
             <p>Geef je kat een naam!</p>
             <paper-input-container no-label-float>
@@ -235,7 +231,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
- 
        <neon-animatable>
         <div class="biggercanvas">
             <img src="{{poezenpic}}">
@@ -293,6 +288,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         poesinit: {
           type: String
+        },
+
+        memberstatus: {
+          type: Boolean,
+          observer: "_memberstatus"
         }
 
       },
@@ -375,6 +375,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.poezenpages.selected = 7;
         this.nonmembername = e.detail.msg;
         this.askeraccount = e.detail.msg;
+      },
+
+      _memberstatus: function(){
+        console.log(this.memberstatus);
+        if(this.memberstatus){
+          this.$.poezenpages.selected = 4; 
+        }
       }
 
     });
