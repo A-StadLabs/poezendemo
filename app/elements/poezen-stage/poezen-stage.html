@@ -247,7 +247,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <neon-animatable>
         <div class="biggercanvas">
-            <h2><span>{{nonmembername}}</span></h2>
+            <h2><span>{{nonmembername}}</span> wil lid worden</h2>
           <paper-button on-tap="cancelMember">Fuck em</paper-button>
           <paper-button on-tap="addMember">Lid maken!</paper-button>
 
@@ -343,7 +343,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       receivedPin: function(){
         // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
         //this.$.poezenpages.selected = 4;
-        this.$.lomqtt.send(this.enteredpin, this.baasjenaam, 2);
+        this.$.lomqtt.send(this.enteredpin, this.account, 2);
       },
 
       receivedCat: function(){
@@ -359,7 +359,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       addMember: function(){
-        console.log("Sponnet moet mij nu lid maken he!!");
+        console.log("Aanvraag lidmaatschap: ", this.askeraccount);
+        // Write to the membership contract and wait for feedback. 
+        // The other dude should get half the money this dude sent.
+        // When we have a callback, goto next page so user can choose pussy.
+        var asker = this.askeraccount;
       },
 
       cancelMember: function(){
@@ -370,6 +374,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log("MSG received: ",e.detail);
         this.$.poezenpages.selected = 7;
         this.nonmembername = e.detail.msg;
+        this.askeraccount = e.detail.msg;
       }
 
     });
