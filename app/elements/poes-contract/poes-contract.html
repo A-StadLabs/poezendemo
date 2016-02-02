@@ -31,7 +31,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           value: 'poes-contract',
           notify: true
+        },
+        web3: {
+          type: Object,
+          observer: "_web3"
+        },
+        web3ready: {
+          type: Boolean,
+          observer: "_web3"
+        },
+        balance: {
+          type: Number,
+          notify: true,
+          observer: "_balance"
+        },
+        account: {
+          
         }
+      },
+
+      ready: function(){
+        
+      },
+
+      _web3: function(){
+        console.log("poes contract kent web3js ", this.web3);
+        this.balance = this.web3.fromWei(this.web3.eth.getBalance(this.account).toNumber(), 'ether');
+      },
+
+      _balance: function(){
+        console.log(this.balance);
       }
     });
   })();

@@ -144,7 +144,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <alabs-web3js on-web3-ready="_web3_ready" id="web3" web3="{{web3}}" accounts="{{accounts}}" account="{{account}}" contract="{{contract}}" balance="{{balance}}" connected="{{web3connected}}" provider="http://Bv61.ma.cx:8545"></alabs-web3js>
 
-    <poes-contract></poes-contract>
+    <poes-contract web3="{{web3}}" account="{{account}}" web3ready="{{web3connected}}"></poes-contract>
 
     <neon-animated-pages id="poezenpages" selected="{{selected}}" 
             entry-animation="{{entryAnimation}}"
@@ -157,7 +157,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <h2>Poezenclub!</h2>
             <p>Web3js: <span>{{web3connected}}</span></p>
             <img src="../../images/poezen/intro.png">
-            <p>Elke dag om 16u een stukje Sponny-cake, voor alle gevalideerde poezen!</p>
+            <p>Elke dag om 16u een stukje sponzige Sponny-cake, voor alle gevalideerde poezen!</p>
 
             <paper-button on-tap="gotoLidworden">Word lid van de poezenclub</paper-button>
             <paper-button on-tap="toonPincode">Pincode</paper-button>
