@@ -22,7 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       id="localstorage" 
       name="myWallet" value="{{walletdata}}" 
       on-iron-localstorage-load-empty="initWallet" on-iron-localstorage-load="loadWallet"></iron-localstorage>
-      
+
   </template>
   <script>
 
@@ -147,6 +147,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.web3.setProvider(web3Provider);
 
         this.balance = this.web3.fromWei(this.web3.eth.getBalance(this.account).toNumber(), 'ether');
+
+        this.connected = true;
 
       },
 

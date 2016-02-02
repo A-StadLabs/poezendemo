@@ -154,7 +154,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <!-- <p>Hello from <span>{{foo}}</span></p> -->
           <div class="lidworden">
             <h2>Poezenclub!</h2>
-            <p>{{web3connected}}</p>
+            <p>Web3js: <span>{{web3connected}}</span></p>
             <img src="../../images/poezen/intro.png">
             <p>Elke dag om 16u een stukje Sponny-cake, voor alle gevalideerde poezen!</p>
 
@@ -297,6 +297,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.poezenpages.selected = 0;
         this.entryAnimation = 'slide-from-right-animation';
         this.exitAnimation = 'slide-left-animation';
+      },
+
+      _web3_ready: function(){
+        console.log("WEB3");
       },
 
       initpoes: function(){
