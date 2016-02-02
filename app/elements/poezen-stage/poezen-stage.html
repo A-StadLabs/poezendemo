@@ -171,12 +171,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <neon-animatable>
         <div class="canvas">
-            <small>Toon deze pincode aan een lid van de poezenclub</small>
-            <h2>{{pincode}}</h2>
+            <small>Vraag een pincode aan een lid van de poezenclub</small>
+          <paper-input-container no-label-float>
+            <label class="centertexting">pincode</label>
+            <input autofocus class="centertexting" is="iron-input" prevent-invalid-input bind-value="{{enteredpin}}">
+          </paper-input-container>
+
           <paper-button on-tap="receivedPin">OK</paper-button>
         </div>
       </neon-animatable>
+
+
+
+
+      <neon-animatable>
+        <div class="canvas">
+            <small>Toon deze pincode aan aspirant-lid van de poezenclub</small>
+            <h2>{{pincode}}</h2>
+<!--           <paper-button on-tap="receivedPin">OK</paper-button>
+ -->        </div>
+      </neon-animatable>
  
+
+
       <neon-animatable>
         <div class="biggercanvas">
             <p>Kies een kat!</p>
@@ -278,7 +295,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       localpoes: function(){
         console.log("I haz a puss, ", this.poesinit);
-        this.$.poezenpages.selected = 3;
+        this.$.poezenpages.selected = 4;
       },
 
       gotoLidworden: function(){
@@ -294,14 +311,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       receivedPin: function(){
         // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
-        this.$.poezenpages.selected = 3;
+        this.$.poezenpages.selected = 4;
       },
 
       receivedCat: function(){
         // Me kunne me dan hie de kat (this.$.poezenselector.selected) geselecteerd;
         console.log('welke poes hebben we te stekken?' , this.$.poezenselector.selected);
         this.poezenpic = '../../images/poezen/poes' + this.$.poezenselector.selected +'.png';
-        this.$.poezenpages.selected = 4;
+        this.$.poezenpages.selected = 5;
       },
 
       gotoNext: function(){
