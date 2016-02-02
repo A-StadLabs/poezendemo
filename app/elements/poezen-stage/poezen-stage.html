@@ -346,6 +346,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.poezenpages.selected = this.$.poezenpages.selected+1;
       },
 
+      addMember: function(){
+        console.log("Sponnet moet mij nu lid maken he!!");
+      },
+
+      cancelMember: function(){
+        this.$.poezenpages.selected = 0;
+      },
+
       msgreceived: function(e){
         console.log("MSG received: ",e.detail);
         this.$.poezenpages.selected = 7;
