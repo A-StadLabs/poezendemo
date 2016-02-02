@@ -129,7 +129,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     </style>
-    <div class="container">
+    
 
      <iron-localstorage name="poezenclub" value="{{poesinit}}"
       on-iron-localstorage-load-empty="initpoes" on-iron-localstorage-load="localpoes"></iron-localstorage>
@@ -142,9 +142,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   pincode="{{pincode}}"
   id="lomqtt"></lo-mqtt>
 
+  <poes-contract id="poescontract" web3="{{web3}}" account="{{account}}">
+    </poes-contract>
+
     <alabs-web3js on-web3-ready="_web3_ready" id="web3" web3="{{web3}}" accounts="{{accounts}}" account="{{account}}" contract="{{contract}}" balance="{{balance}}" connected="{{web3connected}}" provider="http://Bv61.ma.cx:8545"></alabs-web3js>
 
-    <poes-contract web3="{{web3}}" account="{{account}}" web3ready="{{web3connected}}"></poes-contract>
+
+
+    <div class="container">
 
     <neon-animated-pages id="poezenpages" selected="{{selected}}" 
             entry-animation="{{entryAnimation}}"
@@ -152,10 +157,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      
       <neon-animatable>
         <div class="canvas">
-          <!-- <p>Hello from <span>{{foo}}</span></p> -->
           <div class="lidworden">
             <h2>Poezenclub!</h2>
-            <p>Web3js: <span>{{web3connected}}</span></p>
             <img src="../../images/poezen/intro.png">
             <p>Elke dag om 16u een stukje sponzige Sponny-cake, voor alle gevalideerde poezen!</p>
 
@@ -302,6 +305,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _web3_ready: function(){
         console.log("WEB3");
+        this.$.poescontract._web3();
       },
 
       initpoes: function(){

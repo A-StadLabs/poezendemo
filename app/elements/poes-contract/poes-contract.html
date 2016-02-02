@@ -11,14 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <dom-module id="poes-contract">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <div>Hello from <span>{{foo}}</span></div>
-  </template>
+
   <script>
   (function() {
     'use strict';
@@ -36,8 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Object,
           observer: "_web3"
         },
-        web3ready: {
-          type: Boolean,
+        webready: {
           observer: "_web3"
         },
         balance: {
@@ -46,7 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: "_balance"
         },
         account: {
-          
+
         }
       },
 
@@ -60,7 +52,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _balance: function(){
-        console.log(this.balance);
+        console.log("current balance for account ",this.account, ": ",this.balance);
       }
     });
   })();
