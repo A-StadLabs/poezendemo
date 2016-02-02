@@ -291,6 +291,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       mqttconnectedfire: function(){
         console.log("MQTT connected");
+        this.subscribetoPin();
       },
 
       localpoes: function(){
@@ -306,7 +307,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // Me kunne me dan hie de naam (this.poezennaam) meepakken é;
         this.$.poezenpages.selected = 2;
         this.baasjenaam = this.eigennaam;
-        this.$.lomqtt.send(this.pincode, this.eigennaam, 2);
+      },
+
+      subscribetoPin: function(){
+        this.$.lomqtt.subscribe(this.pincode, 2);
       },
 
       receivedPin: function(){

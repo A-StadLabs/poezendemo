@@ -62,7 +62,6 @@ HIER EEN TOPIC ARRAY VAN MAKEN / TEMPLATE REPEAT -->
         }
       },
 
-
       _subscribed: function(e){
         console.log("subscribed", e.detail);
       },
@@ -77,8 +76,7 @@ HIER EEN TOPIC ARRAY VAN MAKEN / TEMPLATE REPEAT -->
       },
 
       send: function(topic, data, qos){
-
-        this.$.pub.topic = "poezenclub/"+topic; 
+        this.$.pub.topic = topic; 
         this.$.pub.payload=data;
         this.$.pub.qos=qos;
         this.$.pub.retained=false;
