@@ -1,0 +1,287 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="poezen-stage">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100vw;
+        margin: 0px;
+        padding: 0px;
+      }
+
+      .container {
+        width: 100%;
+     
+      }
+
+      .canvas {
+        width: 100%;
+        height: 100%;
+        background-color: #EBAFA0;
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+      }
+
+
+      .biggercanvas {
+        width: 100%;
+        height: 100%;
+        background-color: #EBAFA0;
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        overflow-y: scroll;
+        box-sizing:border-box;
+        padding: 50px;  
+      }
+
+
+      .lidworden {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);     
+        width: 100%;
+        box-sizing:border-box;
+        padding: 50px;  
+      }
+
+      neon-animated-pages {
+        height: 100vh;
+      }
+
+      paper-button {
+        text-transform: capitalize;
+        font-size: 20px;
+        background-color: black;
+        color: white;
+        --paper-button-ink-color: black;
+        --paper-button-flat-keyboard-focus: {
+          background-color: black;
+          color: white !important;
+        };
+        --paper-button-raised-keyboard-focus: {
+          background-color: black !important;
+          color: white !important;
+        };
+      }
+      paper-button:hover {
+        background-color: white;
+        color: black;
+      }
+
+    paper-input-container {
+      width: 250px;
+      background-color: white;
+      margin-bottom: 20px;
+      padding: 30px;
+    }
+
+
+    .paper-input-container-0 label, paper-input-char-counter, .paper-input-container-0 input {
+    font-family: 'Indie Flower', cursive;
+    text-transform: capitalize;
+    }
+
+    h2 {
+      font-size: 50px;
+      margin: 0px;
+      padding: 0px;
+    }
+
+    p {
+      margin: 0px 0px 20px 0px;
+      padding: 0px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .lidworden img {
+      width: 80vw;
+      height: 80vw;
+      max-width: 400px;
+      max-height: 400px;
+    }
+
+    #poezenselector .iron-selected {
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .poesitem {
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      overflow: hidden;
+    }
+
+    .poesitem img {
+      width: 100%;
+      height: 100%;
+    }
+
+    </style>
+    <div class="container">
+    <neon-animated-pages id="poezenpages" selected="{{selected}}" 
+            entry-animation="{{entryAnimation}}"
+            exit-animation="{{exitAnimation}}">
+
+
+
+      <neon-animatable>
+        <div class="canvas">
+          <!-- <p>Hello from <span>{{foo}}</span></p> -->
+          <div class="lidworden">
+            <h2>Poezenclub!</h2>
+            <img src="../../images/poezen/intro.png">
+            <p>Elke dag om 16u een stukje Sponny-cake, voor alle gevalideerde poezen!</p>
+
+            <paper-button on-tap="gotoLidworden">Word lid van de poezenclub</paper-button>
+          </div>
+        </div>
+      </neon-animatable>
+
+      <neon-animatable>
+        <div class="canvas">
+          <paper-input-container no-label-float>
+            <label class="centertexting">Geef je naam op</label>
+            <input autofocus class="centertexting" is="iron-input" prevent-invalid-input bind-value="{{eigennaam}}">
+          </paper-input-container>
+          <paper-button on-tap="confirmPoezennaam">OK</paper-button>
+        </div>
+      </neon-animatable>
+
+      <neon-animatable>
+        <div class="canvas">
+            <small>Toon deze pincode aan een lid van de poezenclub</small>
+            <h2>{{pincode}}</h2>
+          <paper-button on-tap="receivedPin">OK</paper-button>
+        </div>
+      </neon-animatable>
+ 
+      <neon-animatable>
+        <div class="biggercanvas">
+            <p>Kies een kat!</p>
+              <iron-selector id="poezenselector" attr-for-selected="poes" selected="1" on-iron-select="welkepoes">
+                <div class="poesitem" poes="1">
+                  <img src="../../images/poezen/poes1.png">
+                </div>
+                <div class="poesitem" poes="2">
+                  <img src="../../images/poezen/poes2.png">
+                </div>
+                <div class="poesitem" poes="3">
+                  <img src="../../images/poezen/poes3.png">
+                </div>
+              </iron-selector>
+          <paper-button on-tap="receivedCat">OK</paper-button>
+        </div>
+      </neon-animatable>
+
+      <neon-animatable>
+        <div class="biggercanvas">
+
+          <div>
+            <p>Geef je kat een naam!</p>
+            <paper-input-container no-label-float>
+              <label class="centertexting">Kies een naam voor je poes</label>
+              <input autofocus class="centertexting" is="iron-input" prevent-invalid-input bind-value="{{poezennaam}}">
+            </paper-input-container>
+            <paper-button on-tap="gotoNext">OK</paper-button>
+          </div>
+        </div>
+      </neon-animatable>
+
+ 
+       <neon-animatable>
+        <div class="biggercanvas">
+            <img src="{{poezenpic}}">
+            <h2><span>{{poezennaam}}</span></h2>
+          <paper-button on-tap="gotoNext">Valideer mijn poes!</paper-button>
+
+        </div>
+      </neon-animatable>
+
+
+
+    </neon-animated-pages>
+    </div>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'poezen-stage',
+
+      properties: {
+        foo: {
+          type: String,
+          value: 'poezen-stage',
+          notify: true
+        },
+
+        poezennaam: {
+          type: String,
+          value: '',
+          notify: true
+        },
+
+        poezenpic: {
+          type: String,
+          value: '',
+          notify: true
+        },
+
+        pincode: {
+          type: Number,
+          value: '1234',
+          notify: true
+        }
+
+      },
+
+      ready: function(){
+        this.$.poezenpages.selected = 0;
+        this.entryAnimation = 'slide-from-right-animation';
+        this.exitAnimation = 'slide-left-animation';
+      },
+
+      gotoLidworden: function(){
+        this.$.poezenpages.selected = 1;
+      },
+
+      confirmPoezennaam: function(){
+        // Me kunne me dan hie de naam (this.poezennaam) meepakken é;
+        this.$.poezenpages.selected = 2;
+      },
+
+      receivedPin: function(){
+        // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
+        this.$.poezenpages.selected = 3;
+      },
+
+
+      receivedCat: function(){
+        // Me kunne me dan hie de kat (this.$.poezenselector.selected) geselecteerd;
+        console.log('welke poes hebben we te stekken?' , this.$.poezenselector.selected);
+        this.poezenpic = '../../images/poezen/poes' + this.$.poezenselector.selected +'.png';
+        this.$.poezenpages.selected = 4;
+      },
+
+      gotoNext: function(){
+        // this.$.babupages.selected ++1;
+        this.$.poezenpages.selected = this.$.poezenpages.selected+1;
+      }
+
+    });
+  })();
+  </script>
+</dom-module>
