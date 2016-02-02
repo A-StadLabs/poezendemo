@@ -9,11 +9,13 @@
 <!-- 
 HIER EEN TOPIC ARRAY VAN MAKEN / TEMPLATE REPEAT -->
 <template is="dom-if" if="{{subs}}">
-
+<!-- 
   <template is="dom-repeat" items="{{children}}" as="t">
     <mqtt-subscription topic="[[t.topic]]" qos="[[t.qos]]" on-mqtt-subscription-subscribed="_subscribed">
     </mqtt-subscription>
-  </template>
+  </template> -->
+  <mqtt-subscription id="sub" topic="{{pincode}}" on-mqtt-subscription-subscribed="_subscribed">
+  </mqtt-subscription>
 
   </template>
 
@@ -69,9 +71,9 @@ HIER EEN TOPIC ARRAY VAN MAKEN / TEMPLATE REPEAT -->
       subscribe: function(topic, qos){
         console.log("Subscribing: ", topic, qos);
           //console.log("BEFORE: ",this.children);
-          var children = [];
-          children.push({topic: topic, qos: qos});
-          this.children = children;
+          //var children = [];
+          //children.push({topic: topic, qos: qos});
+          //this.children = children;
           //console.log("AFTER: ",this.children);
       },
 

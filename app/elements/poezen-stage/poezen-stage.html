@@ -139,6 +139,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <lo-mqtt connected="{{mqttconnected}}" subs
   on-message-received="msgreceived"
   on-mqtt-connected="mqttconnectedfire"
+  pincode="{{pincode}}"
   id="lomqtt"></lo-mqtt>
 
     <neon-animated-pages id="poezenpages" selected="{{selected}}" 
@@ -155,6 +156,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <p>Elke dag om 16u een stukje Sponny-cake, voor alle gevalideerde poezen!</p>
 
             <paper-button on-tap="gotoLidworden">Word lid van de poezenclub</paper-button>
+            <paper-button on-tap="toonPincode">Pincode</paper-button>
           </div>
         </div>
       </neon-animatable>
@@ -266,9 +268,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         pincode: {
-          type: Number,
+          type: String,
           value: function(){
-            return Math.floor(Math.random()*90000) + 10000;
+            return (Math.floor(Math.random()*90000) + 10000).toString();
           },
           notify: true
         },
@@ -303,6 +305,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.poezenpages.selected = 1;
       },
 
+      toonPincode: function(){
+        this.$.poezenpages.selected = 3;
+      },
+
       confirmBaasjenaam: function(){
         // Me kunne me dan hie de naam (this.poezennaam) meepakken é;
         this.$.poezenpages.selected = 2;
@@ -310,7 +316,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       subscribetoPin: function(){
-        this.$.lomqtt.subscribe(this.pincode, 2);
+        //this.$.lomqtt.subscribe(this.pincode, 2);
       },
 
       receivedPin: function(){
@@ -328,6 +334,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       gotoNext: function(){
         // this.$.babupages.selected ++1;
         this.$.poezenpages.selected = this.$.poezenpages.selected+1;
+      },
+
+      msgreceived: function(e){
+        console.log("MSG received: ",e.detail);
       }
 
     });
