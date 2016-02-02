@@ -238,6 +238,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
+      <neon-animatable>
+        <div class="biggercanvas">
+            <h2><span>{{nonmembername}}</span></h2>
+          <paper-button on-tap="cancelMember">Fuck em</paper-button>
+          <paper-button on-tap="addMember">Lid maken!</paper-button>
+
+        </div>
+      </neon-animatable>
+
     </neon-animated-pages>
     </div>
   </template>
@@ -321,7 +330,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       receivedPin: function(){
         // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
-        this.$.poezenpages.selected = 4;
+        //this.$.poezenpages.selected = 4;
+        this.$.lomqtt.send(this.enteredpin, this.baasjenaam, 2);
       },
 
       receivedCat: function(){
@@ -338,6 +348,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       msgreceived: function(e){
         console.log("MSG received: ",e.detail);
+        this.$.poezenpages.selected = 7;
+        this.nonmembername = e.detail.msg;
       }
 
     });
