@@ -142,6 +142,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   pincode="{{pincode}}"
   id="lomqtt"></lo-mqtt>
 
+    <alabs-web3js on-web3-ready="_web3_ready" id="web3" web3="{{web3}}" accounts="{{accounts}}" account="{{account}}" contract="{{contract}}" balance="{{balance}}" connected="{{web3connected}}" provider="http://Bv61.ma.cx:8545"></alabs-web3js>
+
     <neon-animated-pages id="poezenpages" selected="{{selected}}" 
             entry-animation="{{entryAnimation}}"
             exit-animation="{{exitAnimation}}">
@@ -152,6 +154,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <!-- <p>Hello from <span>{{foo}}</span></p> -->
           <div class="lidworden">
             <h2>Poezenclub!</h2>
+            <p>{{web3connected}}</p>
             <img src="../../images/poezen/intro.png">
             <p>Elke dag om 16u een stukje Sponny-cake, voor alle gevalideerde poezen!</p>
 

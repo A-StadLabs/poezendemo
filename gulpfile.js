@@ -130,7 +130,7 @@ gulp.task('lint', ['ensureFiles'], function() {
       // 'app/scripts/**/*.js',
       // 'app/elements/**/*.js',
       // 'app/elements/**/*.html',
-      'gulpfile.js'
+      //'gulpfile.js'
     ])
     .pipe(reload({
       stream: true,
