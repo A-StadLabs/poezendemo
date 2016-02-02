@@ -130,12 +130,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
     <div class="container">
+
+     <iron-localstorage name="poezenclub" value="{{poesinit}}"
+      on-iron-localstorage-load-empty="initpoes" on-iron-localstorage-load="localpoes"></iron-localstorage>
+
+      <iron-localstorage name="baasje" value="{{baasjenaam}}"></iron-localstorage>
+
+      <lo-mqtt connected="{{mqttconnected}}" subs
+  on-message-received="msgreceived"
+  on-mqtt-connected="mqttconnectedfire"
+  id="lomqtt"></lo-mqtt>
+
     <neon-animated-pages id="poezenpages" selected="{{selected}}" 
             entry-animation="{{entryAnimation}}"
             exit-animation="{{exitAnimation}}">
 
-
-
+     
       <neon-animatable>
         <div class="canvas">
           <!-- <p>Hello from <span>{{foo}}</span></p> -->
@@ -155,7 +165,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <label class="centertexting">Geef je naam op</label>
             <input autofocus class="centertexting" is="iron-input" prevent-invalid-input bind-value="{{eigennaam}}">
           </paper-input-container>
-          <paper-button on-tap="confirmPoezennaam">OK</paper-button>
+          <paper-button on-tap="confirmBaasjenaam">OK</paper-button>
         </div>
       </neon-animatable>
 
@@ -209,8 +219,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
-
-
     </neon-animated-pages>
     </div>
   </template>
@@ -242,8 +250,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         pincode: {
           type: Number,
-          value: '1234',
+          value: function(){
+            return Math.floor(Math.random()*90000) + 10000;
+          },
           notify: true
+        },
+
+        poesinit: {
+          type: String
         }
 
       },
@@ -254,20 +268,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.exitAnimation = 'slide-left-animation';
       },
 
+      initpoes: function(){
+        console.log("Initializing poes");
+      },
+
+      mqttconnectedfire: function(){
+        console.log("MQTT connected");
+      },
+
+      localpoes: function(){
+        console.log("I haz a puss, ", this.poesinit);
+        this.$.poezenpages.selected = 3;
+      },
+
       gotoLidworden: function(){
         this.$.poezenpages.selected = 1;
       },
 
-      confirmPoezennaam: function(){
+      confirmBaasjenaam: function(){
         // Me kunne me dan hie de naam (this.poezennaam) meepakken é;
         this.$.poezenpages.selected = 2;
+        this.baasjenaam = this.eigennaam;
+        this.$.lomqtt.send(this.pincode, this.eigennaam, 2);
       },
 
       receivedPin: function(){
         // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
         this.$.poezenpages.selected = 3;
       },
-
 
       receivedCat: function(){
         // Me kunne me dan hie de kat (this.$.poezenselector.selected) geselecteerd;

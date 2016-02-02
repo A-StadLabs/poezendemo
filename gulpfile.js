@@ -119,9 +119,9 @@ gulp.task('ensureFiles', function(cb) {
 // Lint JavaScript
 gulp.task('lint', ['ensureFiles'], function() {
   return gulp.src([
-      'app/scripts/**/*.js',
-      'app/elements/**/*.js',
-      'app/elements/**/*.html',
+      // 'app/scripts/**/*.js',
+      // 'app/elements/**/*.js',
+      // 'app/elements/**/*.html',
       'gulpfile.js'
     ])
     .pipe(reload({
