@@ -58,6 +58,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         globalkeystore: {
           type: Object,
           observer: "_keystore"
+        },
+        memberstatus: {
+          type: Number,
+          notify:true
         }
       },
 
@@ -78,11 +82,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log('YOOOOO');
         this.contracturl = this.resolveUrl('../../contracts/' + this.contract);
         console.log("Got contract! ", JSON.stringify(this.contractjson));
+        this.fire('contract-ready');
       },
 
       handleResponse: function() {
         this.contractjson = this.response;
-
+        //this.stichtNieuweClub();
+        this.memberstatus = (this.membershipStatus() == 1 );
+        console.log("IK BEN LID VAN DE CLUB=",this.memberstatus);
         //this.runContract();
       },
 
@@ -90,14 +97,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log("KEYSTORE: ", this.globalkeystore);
       },
 
+      membershipStatus: function(account){
+        var myContract = this.web3.eth.contract(this.contractjson.abi);
+        var contractinstance = myContract.at(this.contractaddress);
+        var r = contractinstance.membershipStatus('0x' + this.account);
+        console.log('result van MS voor',this.account,'=',r.toNumber(10));
+        return r.toNumber(10);
+      },
+
+      stichtNieuweClub : function(){
+            var self = this;
+
+        this.web3.eth.getGasPrice(function(err, result) {
+
+          var gasPrice = result;
+          var txOptions = {
+            gasPrice: gasPrice.toNumber(10),
+            gasLimit: 3000000,
+            value: 20000000,
+            nonce: 4000000,
+            data: self.contractjson.bytecode
+          };
+
+          var contractData = lightwallet.txutils.createContractTx( self.account, txOptions);
+          var signedTx = self.globalkeystore.signTx(contractData.tx, 'testing', self.account);
+
+
+          self.web3.eth.sendRawTransaction(signedTx
+          , function(err, txhash) {
+            console.log('error: ' + err);
+            console.log('txhash: ' + txhash);          
+          });
+
+/*
+
+          self.lastcontractaddress = contractData.addr;
+
+          console.log('Signed Contract creation TX: ' + signedTx)
+          console.log('')
+          console.log('Contract Address: ' + contractData.addr)
+          console.log('')
+*/
+        });
+      },
+
       addMember: function(newMemberAddress,cb) {
         var self = this;
 
         var account =  this.account;
 
-
         var myContract = this.web3.eth.contract(self.contractjson.abi);
         var contractinstance = myContract.at(self.contractaddress);
+
+        console.log('de sender account=',account);
+        console.log('de newmember account=','0x' + newMemberAddress);
+
 /*
         var r = contractinstance.membershipStatus('0x1d7ae02955135c2d29f0b66cdace63df134986d5');
         console.log('result van MS=',r.toNumber(10));
@@ -129,7 +183,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           //console.log("ABI: ", self.globalkeystore);
 
-          var maaklidTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'addMember', [newMemberAddress], txOptions)
+          var maaklidTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'addMember', ['0x' +newMemberAddress], txOptions)
           var signedRegisterTx = self.globalkeystore.signTx(maaklidTx, 'testing', account)
 
           // inject signedRegisterTx into the network...
