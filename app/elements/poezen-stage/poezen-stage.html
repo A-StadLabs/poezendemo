@@ -150,14 +150,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      <iron-localstorage name="poezenclub" value="{{poesinit}}"
       on-iron-localstorage-load-empty="initpoes" on-iron-localstorage-load="localpoes"></iron-localstorage>
 
+      <iron-localstorage name="poezennaam" value="{{poezennaam}}"></iron-localstorage>
+
       <iron-localstorage name="baasje" value="{{baasjenaam}}"></iron-localstorage>
 
       <iron-localstorage name="mypoescontract" value="{{poescontract}}"></iron-localstorage>
 
-      <iron-localstorage name="memberstatus" value="{{memberstatus}}"></iron-localstorage>
+      <iron-localstorage name="memberstatus" on-iron-localstorage-load-empty="initmember" value="{{memberstatus}}"></iron-localstorage>
 
-      <iron-localstorage name="gekozenpoesnummer" value="{{}}"></iron-localstorage>
-
+<!--       <iron-localstorage name="gekozenpoesnummer" value="{{}}"></iron-localstorage>
+ -->
       <lo-mqtt connected="{{mqttconnected}}" subs
   on-message-received="msgreceived"
   on-mqtt-connected="mqttconnectedfire"
@@ -291,7 +293,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- Dit is de plek waar je je poes ziet -->
        <neon-animatable>
         <div class="biggercanvas">
-          <poes-aai catnumber="{{poezenpic}}"></poes-aai>
+          <poes-aai catnumber="{{poesinit}}"></poes-aai>
             <h2><span>{{poezennaam}}</span></h2>
           <paper-button on-tap="enterValidationpin">Valideer mijn poes!</paper-button>
 
@@ -353,7 +355,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true
         },
 
-        poezenpic: {
+        poesinit: {
           type: String,
           value: '',
           notify: true
@@ -395,6 +397,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       initpoes: function(){
         console.log("Initializing poes");
+        this.$.poezenpages.selected = 4;
+
       },
 
       mqttconnectedfire: function(){
@@ -403,8 +407,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       localpoes: function(){
-        console.log("I haz a puss, ", this.poesinit);
+
         this.$.poezenpages.selected = 6;
+        console.log("I haz a puss, ", this.poesinit);
       },
 
       welkepoes: function(){
@@ -449,7 +454,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       receivedCat: function(){
         // Me kunne me dan hie de kat (this.$.poezenselector.selected) geselecteerd;
         console.log('welke poes hebben we te stekken?' , this.$.poezenselector.selected);
-        this.poezenpic = this.$.poezenselector.selected;
+        this.poesinit = this.$.poezenselector.selected;
         this.$.poezenpages.selected = 5;
       },
 
@@ -508,10 +513,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _memberstatus: function(){
-        console.log(this.memberstatus);
-        if(this.memberstatus){
+        console.log('KOMTIEEEEEE' , this.memberstatus);
+        if(this.memberstatus && !this.poesinit){
           this.$.poezenpages.selected = 4; 
         }
+      },
+
+      initmember: function(){
+        // this.memberstatus = false;
+        console.log('Ja ge hebt gene member, fantastisch');
+        this.$.poezenpages.selected = 0; 
       }
 
     });
