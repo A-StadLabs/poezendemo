@@ -156,6 +156,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <iron-localstorage name="memberstatus" value="{{memberstatus}}"></iron-localstorage>
 
+      <iron-localstorage name="gekozenpoesnummer" value="{{}}"></iron-localstorage>
+
       <lo-mqtt connected="{{mqttconnected}}" subs
   on-message-received="msgreceived"
   on-mqtt-connected="mqttconnectedfire"
@@ -222,7 +224,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <neon-animatable>
         <div class="biggercanvas">
             <p>Kies een kat!</p>
-              <iron-selector id="poezenselector" attr-for-selected="poes" selected="1" on-iron-select="welkepoes">
+              <iron-selector id="poezenselector" attr-for-selected="poes" on-iron-select="welkepoes" selected="{{poesinit}}">
                 <div class="poesitem" poes="1">
                   <img src="../../images/poezen/poes1.png">
                 </div>
@@ -324,7 +326,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <h2><span>{{incomingmember}}</span> wil zijn poes<span>{{incomingpussyname}}</span> laten valideren</h2>
           <img src="{{incomingpussypic}}">
           <paper-button on-tap="cancelMember">Fuck em</paper-button>
-          <paper-button on-tap="addMember">Lid maken!</paper-button>
+          <paper-button on-tap="validatePussy">Valideer!</paper-button>
         </div>
       </neon-animatable>
 
@@ -377,7 +379,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       ready: function(){
-        this.$.poezenpages.selected = 0;
+        //this.$.poezenpages.selected = 0;
         this.entryAnimation = 'slide-from-right-animation';
         this.exitAnimation = 'slide-left-animation';
       },
@@ -402,7 +404,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       localpoes: function(){
         console.log("I haz a puss, ", this.poesinit);
-        this.$.poezenpages.selected = 4;
+        this.$.poezenpages.selected = 6;
+      },
+
+      welkepoes: function(){
+        this.poesinit = this.$.poezenselector.selected;
+        //this.$.poezenpages.selected = 5;
       },
 
       gotoLidworden: function(){
@@ -477,15 +484,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           break;
           case "validate":
           console.log("Meneerke wil zijn poes laten valideren");
-          this.incomingpussyname = commandarray[2];
+          this.incomingpussyname = commandarray[3];
           this.incomingpin = commandarray[1];
-          this.incomingmember = commandarray[3];
-          this.incomingpussypic = "../../images/poezen/poes"+commandarray[1]+".png";
+          this.incomingmember = commandarray[4];
+          this.incomingpussypic = "../../images/poezen/poes"+commandarray[2]+".png";
           this.$.poezenpages.selected = 9;
           break;
           case "validatedone":
           console.log("Validatie is done!");
-          this.$.poezenpages.selected = 4;
+          //this.$.poezenpages.selected = 4;
           break;
         };
         
@@ -494,6 +501,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       validatePussy: function(){
         // voer contract uit en stuur ne message terug naar de user dat zijn pussy validated is.
         this.$.lomqtt.send(this.incomingpin, "validatedone"+"|"+this.account+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam, 2);
+        this.$.poezenpages.selected = 4;
       },
 
       _memberstatus: function(){
