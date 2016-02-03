@@ -500,6 +500,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       validatePussy: function(){
         // voer contract uit en stuur ne message terug naar de user dat zijn pussy validated is.
+        this.$.poescontract.addMember(this.askeraccount, function(err, tx){
+          console.log("callback van addmember: ", tx, " Error?", err);
+        })
         this.$.lomqtt.send(this.incomingpin, "validatedone"+"|"+this.account+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam, 2);
         this.$.poezenpages.selected = 4;
       },
