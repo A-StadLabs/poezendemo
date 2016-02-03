@@ -99,19 +99,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var txOptions = {
             gasPrice: gasPrice,
             gasLimit: 3000000,
-            value: 100000000,
+            value: 6*1e18,
             nonce: 3,
             to: self.contractaddress
           };
 
           console.log("ABI: ",self.globalkeystore);
 
-          var registerTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'get', [], txOptions)
-          var signedRegisterTx = self.globalkeystore.signTx(registerTx, 'testing', self.account)
+
+
+          var maaklidTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'addMember', ['0x2620cf5cefddeeda847c10ddfca7d781f54257d8'], txOptions)
+          var signedRegisterTx = self.globalkeystore.signTx(maaklidTx, 'testing', self.account)
 
            // inject signedRegisterTx into the network...
-           console.log('Signed register key TX: ' + signedRegisterTx)
-           console.log('')
+           console.log('Signed register key TX: ' + signedRegisterTx);
+
+
+        self.web3.eth.sendTransaction({from: self.account, to: self.contractaddress, value: 6*1e18, gasPrice: gasPrice, gas: 3000000, data:signedRegisterTx}, function (err, txhash) {
+          console.log('error: ' + err)
+          console.log('txhash: ' + txhash)
+        });
+
+
 
           });
         }
