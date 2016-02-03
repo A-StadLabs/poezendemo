@@ -38,7 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .biggercanvas {
         width: 100%;
-        height: 100%;
+                min-height: 100%;
         background-color: #EBAFA0;
         @apply(--layout-vertical);
         @apply(--layout-center-center);
@@ -114,7 +114,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     #poezenselector .iron-selected {
-      background-color: rgba(0,0,0,0.4);
+      background-color: rgba(255,255,255,0.25);
+      border: 2px solid white;
+    
     }
 
     .poesitem {
@@ -123,11 +125,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       width: 100px;
       height: 100px;
       overflow: hidden;
+      margin: 5px;
+      border: 2px solid transparent;
+
     }
 
     .poesitem img {
       width: 100%;
       height: 100%;
+    }
+
+    #poezenselector {
+      width: 80vw;
+      max-width: 800px;
+      @apply(--layout-horizontal);
+      @apply(--layout-wrap);
+      @apply(--layout-center-center);
+
     }
 
     </style>
@@ -136,12 +150,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      <iron-localstorage name="poezenclub" value="{{poesinit}}"
       on-iron-localstorage-load-empty="initpoes" on-iron-localstorage-load="localpoes"></iron-localstorage>
 
+      <iron-localstorage name="poezennaam" value="{{poezennaam}}"></iron-localstorage>
+
       <iron-localstorage name="baasje" value="{{baasjenaam}}"></iron-localstorage>
 
       <iron-localstorage name="mypoescontract" value="{{poescontract}}"></iron-localstorage>
 
-      <iron-localstorage name="memberstatus" value="{{memberstatus}}"></iron-localstorage>
+      <iron-localstorage name="memberstatus" on-iron-localstorage-load-empty="initmember" value="{{memberstatus}}"></iron-localstorage>
 
+<!--       <iron-localstorage name="gekozenpoesnummer" value="{{}}"></iron-localstorage>
+ -->
       <lo-mqtt connected="{{mqttconnected}}" subs
   on-message-received="msgreceived"
   on-mqtt-connected="mqttconnectedfire"
@@ -182,6 +200,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
+      <!-- Aanvraag lidmaatschap -->
       <neon-animatable>
         <div class="canvas">
             <small>Vraag een pincode aan een lid van de poezenclub</small>
@@ -194,18 +213,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
+      <!-- Dit is het schermpje waar je kan kiezen of iemand lid wordt of niet -->
       <neon-animatable>
         <div class="canvas">
             <small>Toon deze pincode aan aspirant-lid van de poezenclub</small>
             <h2>{{pincode}}</h2>
-<!--           <paper-button on-tap="receivedPin">OK</paper-button>
- -->        </div>
+           <paper-button on-tap="backtozero">Sluiten</paper-button>
+        </div>
       </neon-animatable>
 
+      <!-- Dit is het schermpje waar je een poes kiest -->
       <neon-animatable>
         <div class="biggercanvas">
             <p>Kies een kat!</p>
-              <iron-selector id="poezenselector" attr-for-selected="poes" selected="1" on-iron-select="welkepoes">
+              <iron-selector id="poezenselector" attr-for-selected="poes" on-iron-select="welkepoes" selected="{{poesinit}}">
                 <div class="poesitem" poes="1">
                   <img src="../../images/poezen/poes1.png">
                 </div>
@@ -215,13 +236,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <div class="poesitem" poes="3">
                   <img src="../../images/poezen/poes3.png">
                 </div>
+                <div class="poesitem" poes="4">
+                  <img src="../../images/poezen/poes4.png">
+                </div>
+                <div class="poesitem" poes="5">
+                  <img src="../../images/poezen/poes5.png">
+                </div>
+                <div class="poesitem" poes="6">
+                  <img src="../../images/poezen/poes6.png">
+                </div>
+                <div class="poesitem" poes="7">
+                  <img src="../../images/poezen/poes7.png">
+                </div>
+                <div class="poesitem" poes="8">
+                  <img src="../../images/poezen/poes8.png">
+                </div>
+                <div class="poesitem" poes="9">
+                  <img src="../../images/poezen/poes9.png">
+                </div>
+                <div class="poesitem" poes="10">
+                  <img src="../../images/poezen/poes10.png">
+                </div>
+                <div class="poesitem" poes="11">
+                  <img src="../../images/poezen/poes11.png">
+                </div>
+                <div class="poesitem" poes="12">
+                  <img src="../../images/poezen/poes12.png">
+                </div>
+                <div class="poesitem" poes="13">
+                  <img src="../../images/poezen/poes13.png">
+                </div>
+                <div class="poesitem" poes="14">
+                  <img src="../../images/poezen/poes14.png">
+                </div>
+
+
               </iron-selector>
           <paper-button on-tap="receivedCat">OK</paper-button>
         </div>
       </neon-animatable>
 
+      <!-- Dit is het schermpje waar je een naam voor je poes ingeeft -->
       <neon-animatable>
-        <div class="biggercanvas">
+        <div class="canvas">
           <div>
             <p>Geef je kat een naam!</p>
             <paper-input-container no-label-float>
@@ -233,21 +290,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
+      <!-- Dit is de plek waar je je poes ziet -->
        <neon-animatable>
         <div class="biggercanvas">
-            <img src="{{poezenpic}}">
+          <poes-aai catnumber="{{poesinit}}"></poes-aai>
             <h2><span>{{poezennaam}}</span></h2>
-          <paper-button on-tap="gotoNext">Valideer mijn poes!</paper-button>
+          <paper-button on-tap="enterValidationpin">Valideer mijn poes!</paper-button>
 
         </div>
       </neon-animatable>
 
+
+      <!-- Dit is het schermpje waar je kan kiezen of iemand lid wordt of niet -->
       <neon-animatable>
         <div class="biggercanvas">
-            <h2><span>{{nonmembername}}</span> wil lid worden</h2>
+          <h2><span>{{nonmembername}}</span> wil lid worden</h2>
           <paper-button on-tap="cancelMember">Fuck em</paper-button>
           <paper-button on-tap="addMember">Lid maken!</paper-button>
+        </div>
+      </neon-animatable>
 
+       <!-- Aanvraag poesvalidatie -->
+      <neon-animatable>
+        <div class="canvas">
+            <small>Vraag een pincode aan iemand met een gevalideerde poes</small>
+          <paper-input-container no-label-float>
+            <label class="centertexting">pincode</label>
+            <input autofocus class="centertexting" is="iron-input" prevent-invalid-input bind-value="{{enteredpin2}}">
+          </paper-input-container>
+          <paper-button on-tap="receivedPin2">OK</paper-button>
+        </div>
+      </neon-animatable>
+
+      <!-- Dit is het schermpje waar je kan kiezen of je een poes wil valideren of niet -->
+      <neon-animatable>
+        <div class="biggercanvas">
+          <h2><span>{{incomingmember}}</span> wil zijn poes<span>{{incomingpussyname}}</span> laten valideren</h2>
+          <img src="{{incomingpussypic}}">
+          <paper-button on-tap="cancelMember">Fuck em</paper-button>
+          <paper-button on-tap="validatePussy">Valideer!</paper-button>
         </div>
       </neon-animatable>
 
@@ -274,7 +355,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true
         },
 
-        poezenpic: {
+        poesinit: {
           type: String,
           value: '',
           notify: true
@@ -300,9 +381,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       ready: function(){
-        this.$.poezenpages.selected = 0;
+        //this.$.poezenpages.selected = 0;
         this.entryAnimation = 'slide-from-right-animation';
         this.exitAnimation = 'slide-left-animation';
+      },
+
+      backtozero: function(){
+        this.$.poezenpages.selected = 0;
       },
 
       _web3_ready: function(){
@@ -312,6 +397,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       initpoes: function(){
         console.log("Initializing poes");
+        this.$.poezenpages.selected = 4;
+
       },
 
       mqttconnectedfire: function(){
@@ -320,8 +407,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       localpoes: function(){
+
+        this.$.poezenpages.selected = 6;
         console.log("I haz a puss, ", this.poesinit);
-        this.$.poezenpages.selected = 4;
+      },
+
+      welkepoes: function(){
+        this.poesinit = this.$.poezenselector.selected;
+        //this.$.poezenpages.selected = 5;
       },
 
       gotoLidworden: function(){
@@ -338,6 +431,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.baasjenaam = this.eigennaam;
       },
 
+      enterValidationpin: function(){
+        this.$.poezenpages.selected = 8;
+      },
+
       subscribetoPin: function(){
         //this.$.lomqtt.subscribe(this.pincode, 2);
       },
@@ -345,13 +442,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       receivedPin: function(){
         // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
         //this.$.poezenpages.selected = 4;
-        this.$.lomqtt.send(this.enteredpin, this.account, 2);
+        this.$.lomqtt.send(this.enteredpin, "membership"+"|"+this.account+"|"+this.baasjenaam, 2);
+      },
+
+      receivedPin2: function(){
+        // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
+        //this.$.poezenpages.selected = 4;
+        this.$.lomqtt.send(this.enteredpin2, "validate"+"|"+this.pincode+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam, 2);
       },
 
       receivedCat: function(){
         // Me kunne me dan hie de kat (this.$.poezenselector.selected) geselecteerd;
         console.log('welke poes hebben we te stekken?' , this.$.poezenselector.selected);
-        this.poezenpic = '../../images/poezen/poes' + this.$.poezenselector.selected +'.png';
+        this.poesinit = this.$.poezenselector.selected;
         this.$.poezenpages.selected = 5;
       },
 
@@ -374,16 +477,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       msgreceived: function(e){
         console.log("MSG received: ",e.detail);
-        this.$.poezenpages.selected = 7;
-        this.nonmembername = e.detail.msg;
-        this.askeraccount = e.detail.msg;
+        // Split the motherfucking string!
+        var commandarray = e.detail.msg.split("|");
+        console.log(commandarray);
+        switch(commandarray[0]) {
+          case "membership":
+          console.log("Meneerke wil lid worden");
+          this.$.poezenpages.selected = 7;
+          this.nonmembername = commandarray[1];
+          this.askeraccount = commandarray[1];
+          break;
+          case "validate":
+          console.log("Meneerke wil zijn poes laten valideren");
+          this.incomingpussyname = commandarray[3];
+          this.incomingpin = commandarray[1];
+          this.incomingmember = commandarray[4];
+          this.incomingpussypic = "../../images/poezen/poes"+commandarray[2]+".png";
+          this.$.poezenpages.selected = 9;
+          break;
+          case "validatedone":
+          console.log("Validatie is done!");
+          //this.$.poezenpages.selected = 4;
+          break;
+        };
+        
+      },
+
+      validatePussy: function(){
+        // voer contract uit en stuur ne message terug naar de user dat zijn pussy validated is.
+        this.$.lomqtt.send(this.incomingpin, "validatedone"+"|"+this.account+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam, 2);
+        this.$.poezenpages.selected = 4;
       },
 
       _memberstatus: function(){
-        console.log(this.memberstatus);
-        if(this.memberstatus){
+        console.log('KOMTIEEEEEE' , this.memberstatus);
+        if(this.memberstatus && !this.poesinit){
           this.$.poezenpages.selected = 4; 
         }
+      },
+
+      initmember: function(){
+        // this.memberstatus = false;
+        console.log('Ja ge hebt gene member, fantastisch');
+        this.$.poezenpages.selected = 0; 
       }
 
     });
