@@ -82,15 +82,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       handleResponse: function() {
         this.contractjson = this.response;
-        console.log("Contract JSON: ", this.contractjson);
-        this.runContract();
+        //console.log("Contract JSON: ", this.contractjson);
+        //this.runContract();
       },
 
       _keystore: function() {
         console.log("KEYSTORE: ", this.globalkeystore);
       },
 
-      runContract: function() {
+      addMember: function(newMemberAddress,cb) {
         var self = this;
 
         var account =  this.account;
@@ -117,7 +117,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
 
         this.web3.eth.getGasPrice(function(err, result) {
-          //console.log("GASPRICE: ", result.toNumber(10));
+
           var gasPrice = result.toNumber(10);
           var txOptions = {
             gasPrice: gasPrice,
@@ -127,13 +127,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             to: self.contractaddress
           };
 
-          console.log("ABI: ", self.globalkeystore);
+          //console.log("ABI: ", self.globalkeystore);
 
-
-
-
-
-          var maaklidTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'addMember', ['0x2620cf5cefddeeda847c10ddfca7d781f54257d8'], txOptions)
+          var maaklidTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'addMember', [newMemberAddress], txOptions)
           var signedRegisterTx = self.globalkeystore.signTx(maaklidTx, 'testing', account)
 
           // inject signedRegisterTx into the network...
@@ -141,18 +137,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           self.web3.eth.sendRawTransaction(signedRegisterTx
           , function(err, txhash) {
-            console.log('error: ' + err)
-            console.log('txhash: ' + txhash)
+            console.log('error: ' + err);
+            console.log('txhash: ' + txhash);
+            if (cb){
+              cb(err,txhash);
+            }
           });
 
         });
 
-/*
-var filter = 
-        this.web3.eth.watch({altered: {at: self.account, id: self.contractaddress}}).changed(function() {
-  console.log('changed:',self.web3.toDecimal(web3.eth.stateAt(self.contractaddress,self.account)));
-          });
-*/
       }
     });
   })();
