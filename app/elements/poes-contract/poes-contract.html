@@ -87,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       handleResponse: function() {
         this.contractjson = this.response;
-        //this.stichtNieuweClub();
+        this.stichtNieuweClub();
         this.memberstatus = (this.membershipStatus() == 1 );
         console.log("IK BEN LID VAN DE CLUB=",this.memberstatus);
         //this.runContract();
@@ -127,6 +127,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           , function(err, txhash) {
             console.log('error: ' + err);
             console.log('txhash: ' + txhash);          
+
+            if (!err){
+              console.log('je nieuwe club heeft contractid=',contractData.addr);
+            }else{
+              console.log('je nieuwe club kan niet worden gemaakt. jammer...');
+            }
+
+
           });
 
 /*
