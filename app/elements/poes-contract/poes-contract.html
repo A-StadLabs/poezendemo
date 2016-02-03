@@ -114,8 +114,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var txOptions = {
             gasPrice: gasPrice.toNumber(10),
             gasLimit: 3000000,
-            value: 20000000,
-            nonce: 4000000,
+            value: 3*1e18,
+            nonce: new Date().getTime(),
             data: self.contractjson.bytecode
           };
 
@@ -129,11 +129,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             console.log('txhash: ' + txhash);          
 
             if (!err){
-              console.log('je nieuwe club heeft contractid=',contractData.addr);
+              console.log('de nieuwe club van account ',self.account,' heeft contractid ',contractData.addr);
+              self.contractaddress = contractData.addr;
             }else{
               console.log('je nieuwe club kan niet worden gemaakt. jammer...');
             }
 
+            console.log('okee?');
 
           });
 
