@@ -61,69 +61,99 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
-      ready: function(){
-        
+      ready: function() {
+
       },
 
-      _web3: function(){
+      _web3: function() {
         console.log("poes contract kent web3js ", this.web3);
         this.balance = this.web3.fromWei(this.web3.eth.getBalance(this.account).toNumber(), 'ether');
       },
 
-      _balance: function(){
-        console.log("current balance for account ",this.account, ": ",this.balance);
+      _balance: function() {
+        console.log("current balance for account ", this.account, ": ", this.balance);
       },
 
-      _contract: function(){
+      _contract: function() {
         console.log('YOOOOO');
-        this.contracturl = this.resolveUrl('../../contracts/'+this.contract);
+        this.contracturl = this.resolveUrl('../../contracts/' + this.contract);
         console.log("Got contract! ", JSON.stringify(this.contractjson));
       },
 
-      handleResponse: function(){
+      handleResponse: function() {
         this.contractjson = this.response;
         console.log("Contract JSON: ", this.contractjson);
         this.runContract();
       },
 
-      _keystore: function(){
+      _keystore: function() {
         console.log("KEYSTORE: ", this.globalkeystore);
       },
 
-      runContract: function(){
+      runContract: function() {
         var self = this;
 
-        this.web3.eth.getGasPrice(function(err, result){
+        var account =  this.account;
+
+
+        var myContract = this.web3.eth.contract(self.contractjson.abi);
+        var contractinstance = myContract.at(self.contractaddress);
+/*
+        var r = contractinstance.membershipStatus('0x1d7ae02955135c2d29f0b66cdace63df134986d5');
+        console.log('result van MS=',r.toNumber(10));
+
+
+        this.web3.eth.getGasPrice(function(err, result) {
+
+        contractinstance.addMember('0x2b38d512d3f3cfef030c34bc9e5c697e9b095857',{ gasPrice: result.toNumber(10),value:6*1e18,gas:3000000,from:self.account},function(err){
+          console.log('yow');
+        });
+});*/
+
+        contractinstance.MemberAdded(function(err,res){
+          console.log('MEMBERADDED SUSKE');
+          console.log('err',err);
+          console.log('res',res);
+        });
+
+        this.web3.eth.getGasPrice(function(err, result) {
           //console.log("GASPRICE: ", result.toNumber(10));
           var gasPrice = result.toNumber(10);
           var txOptions = {
             gasPrice: gasPrice,
             gasLimit: 3000000,
-            value: 6*1e18,
-            nonce: 3,
+            value: 6 * 1e18,
+            nonce: 30000,
             to: self.contractaddress
           };
 
-          console.log("ABI: ",self.globalkeystore);
+          console.log("ABI: ", self.globalkeystore);
+
+
 
 
 
           var maaklidTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'addMember', ['0x2620cf5cefddeeda847c10ddfca7d781f54257d8'], txOptions)
-          var signedRegisterTx = self.globalkeystore.signTx(maaklidTx, 'testing', self.account)
+          var signedRegisterTx = self.globalkeystore.signTx(maaklidTx, 'testing', account)
 
-           // inject signedRegisterTx into the network...
-           console.log('Signed register key TX: ' + signedRegisterTx);
+          // inject signedRegisterTx into the network...
+          console.log('Signed register key TX: ' + signedRegisterTx);
 
+          self.web3.eth.sendRawTransaction(signedRegisterTx
+          , function(err, txhash) {
+            console.log('error: ' + err)
+            console.log('txhash: ' + txhash)
+          });
 
-        self.web3.eth.sendTransaction({from: self.account, to: self.contractaddress, value: 6*1e18, gasPrice: gasPrice, gas: 3000000, data:signedRegisterTx}, function (err, txhash) {
-          console.log('error: ' + err)
-          console.log('txhash: ' + txhash)
         });
 
-
-
+/*
+var filter = 
+        this.web3.eth.watch({altered: {at: self.account, id: self.contractaddress}}).changed(function() {
+  console.log('changed:',self.web3.toDecimal(web3.eth.stateAt(self.contractaddress,self.account)));
           });
-        }
+*/
+      }
     });
   })();
   </script>
