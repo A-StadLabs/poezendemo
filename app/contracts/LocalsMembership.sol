@@ -1,4 +1,4 @@
-contract LocalsMembership {
+    contract LocalsMembership {
     address adam;
     uint price;
     mapping (address => uint) members;

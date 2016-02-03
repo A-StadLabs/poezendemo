@@ -77,6 +77,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             provider: '',
             token: ''
           },
+        },
+        globalkeystore: {
+          type: Object,
+          notify: true
         }
       },
 
@@ -93,6 +97,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.global_keystore.generateNewAddress("testing", 1);
         this.set('walletdata',this.global_keystore.serialize());
         this.account = this.global_keystore.getAddresses()[0];
+        this.globalkeystore = this.global_keystore; 
         this.web3connect();
         this.fire('web3-ready');
       },      
@@ -102,7 +107,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.global_keystore = new lightwallet.keystore().deserialize(this.walletdata);
         console.log('loaded keystore. Addressess',this.global_keystore.getAddresses());
         this.account = this.global_keystore.getAddresses()[0];
-        this.web3connect();      
+        this.web3connect();   
+        this.globalkeystore = this.global_keystore;   
         this.fire('web3-ready');
       },
 

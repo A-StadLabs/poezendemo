@@ -9,9 +9,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="poes-contract">
-
+  <template>
+    <iron-ajax
+       auto
+       url="{{contracturl}}"
+       handle-as="json"
+       on-response="handleResponse"
+       last-response="{{response}}"></iron-ajax>
+  </template>
   <script>
   (function() {
     'use strict';
@@ -39,6 +47,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         account: {
 
+        },
+        contract: {
+          type: String,
+          observer: "_contract"
+        },
+        contractaddress: {
+          type: String
+        },
+        globalkeystore: {
+          type: Object,
+          observer: "_keystore"
         }
       },
 
@@ -53,7 +72,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _balance: function(){
         console.log("current balance for account ",this.account, ": ",this.balance);
-      }
+      },
+
+      _contract: function(){
+        console.log('YOOOOO');
+        this.contracturl = this.resolveUrl('../../contracts/'+this.contract);
+        console.log("Got contract! ", JSON.stringify(this.contractjson));
+      },
+
+      handleResponse: function(){
+        this.contractjson = this.response;
+        console.log("Contract JSON: ", this.contractjson);
+        this.runContract();
+      },
+
+      _keystore: function(){
+        console.log("KEYSTORE: ", this.globalkeystore);
+      },
+
+      runContract: function(){
+        var self = this;
+
+        this.web3.eth.getGasPrice(function(err, result){
+          //console.log("GASPRICE: ", result.toNumber(10));
+          var gasPrice = result.toNumber(10);
+          var txOptions = {
+            gasPrice: gasPrice,
+            gasLimit: 3000000,
+            value: 100000000,
+            nonce: 3,
+            to: self.contractaddress
+          };
+
+          console.log("ABI: ",self.globalkeystore);
+
+          var registerTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'get', [], txOptions)
+          var signedRegisterTx = self.globalkeystore.signTx(registerTx, 'testing', self.account)
+
+           // inject signedRegisterTx into the network...
+           console.log('Signed register key TX: ' + signedRegisterTx)
+           console.log('')
+
+          });
+        }
     });
   })();
   </script>
