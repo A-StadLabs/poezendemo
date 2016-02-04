@@ -190,10 +190,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   pincode="{{pincode}}"
   id="lomqtt"></lo-mqtt>
 
-  <poes-contract id="poescontract" web3="{{web3}}" account="{{account}}" contract="LocalsMembership.json" globalkeystore="{{globalkeystore}}" contractaddress="0x2bd2fb8833819d5c829ec620f2bf5c2598559d52">
+  <poes-contract id="poescontract" web3="{{web3}}" account="{{account}}" contract="LocalsMembership.json" globalkeystore="{{globalkeystore}}" memberstatus="{{memberstatus}}" contractaddress="48768435a5303c5a929114a6a006ee269b6711dd">
+
     </poes-contract>
     
-    <alabs-web3js on-web3-ready="_web3_ready" id="web3" web3="{{web3}}" accounts="{{accounts}}" account="{{account}}" contract="{{contract}}" balance="{{balance}}" connected="{{web3connected}}" globalkeystore="{{globalkeystore}}" provider="http://Bv61.ma.cx:8545"></alabs-web3js>
+    <alabs-web3js on-web3-ready="_web3_ready" id="web3" web3="{{web3}}" accounts="{{accounts}}" account="{{account}}" contract="{{contract}}" balance="{{balance}}" connected="{{web3connected}}" globalkeystore="{{globalkeystore}}" provider="http://10.0.5.33:8545"></alabs-web3js>
 
     <div class="container">
 
@@ -406,7 +407,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
       },
-
       ready: function(){
         // this.$.poezenpages.selected = 0;
         this.entryAnimation = 'slide-from-right-animation';
@@ -425,6 +425,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _web3_ready: function(){
         console.log("WEB3");
         this.$.poescontract._web3();
+        //this.memberstatus = this.$.poescontract.membershipStatus(this.account);
       },
 
       initpoes: function(){
@@ -501,6 +502,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // The other dude should get half the money this dude sent.
         // When we have a callback, goto next page so user can choose pussy.
         var asker = this.askeraccount;
+        this.$.poescontract.addMember(asker, function(err, tx){
+          console.log("callback van addmember: ", tx, " Error?", err);
+        })
       },
 
       cancelMember: function(){
