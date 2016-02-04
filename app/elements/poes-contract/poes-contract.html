@@ -87,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       handleResponse: function() {
         this.contractjson = this.response;
-        this.stichtNieuweClub();
+        //this.stichtNieuweClub();
         this.memberstatus = (this.membershipStatus() == 1 );
         console.log("IK BEN LID VAN DE CLUB=",this.memberstatus);
         //this.runContract();
@@ -106,6 +106,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       stichtNieuweClub : function(){
+        console.log('maak een nieuwe club');
             var self = this;
 
         this.web3.eth.getGasPrice(function(err, result) {
@@ -118,9 +119,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             nonce: new Date().getTime(),
             data: self.contractjson.bytecode
           };
-
+          console.log('de txoptions van jouw nieuwe club is ',txOptions);
           var contractData = lightwallet.txutils.createContractTx( self.account, txOptions);
+          console.log('de createContractTx van jouw nieuwe club is ',contractData);
+
           var signedTx = self.globalkeystore.signTx(contractData.tx, 'testing', self.account);
+          console.log('de signTx van jouw nieuwe club is ',signedTx);
 
 
           self.web3.eth.sendRawTransaction(signedTx
