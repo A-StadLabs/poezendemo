@@ -71,6 +71,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _web3: function() {
         console.log("poes contract kent web3js ", this.web3);
+        console.log("contract adres van deze club=", this.contractaddress);
         this.balance = this.web3.fromWei(this.web3.eth.getBalance(this.account).toNumber(), 'ether');
       },
 
@@ -158,13 +159,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       addMember: function(newMemberAddress,cb) {
         var self = this;
 
-        var account =  this.account;
-
         var myContract = this.web3.eth.contract(self.contractjson.abi);
         var contractinstance = myContract.at(self.contractaddress);
 
-        console.log('de sender account=',account);
-        console.log('de newmember account=','0x' + newMemberAddress);
+        console.log('de inviter account=',self.account);
+        console.log('de newmember account=', newMemberAddress);
+        console.log('het contract adres=', self.contractaddress);
 
 /*
         var r = contractinstance.membershipStatus('0x1d7ae02955135c2d29f0b66cdace63df134986d5');
@@ -197,8 +197,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           //console.log("ABI: ", self.globalkeystore);
 
-          var maaklidTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'addMember', ['0x' +newMemberAddress], txOptions)
-          var signedRegisterTx = self.globalkeystore.signTx(maaklidTx, 'testing', account)
+          var maaklidTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'addMember', [ '0x' +newMemberAddress], txOptions);
+          var signedRegisterTx = self.globalkeystore.signTx(maaklidTx, 'testing', self.account)
 
           // inject signedRegisterTx into the network...
           console.log('Signed register key TX: ' + signedRegisterTx);
