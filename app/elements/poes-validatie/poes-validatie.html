@@ -94,6 +94,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       addValidation: function(validatorAddress){
+        var self = this;
         this.web3.eth.getGasPrice(function(err, result) {
 
           var gasPrice = result.toNumber(10);
