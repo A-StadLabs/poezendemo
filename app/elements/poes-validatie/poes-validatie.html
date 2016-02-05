@@ -75,7 +75,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _initcontract: function() {
-
+        var self = this;
         if (this.web3 && this.contractjson && this.account) {
           if (!this.contractaddress) {
             console.log('poezen-validatie: ik heb geen contract');
@@ -98,7 +98,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
       },
-      
+
       _getValidations: function(){
         var myContract = this.web3.eth.contract(this.contractjson.abi);
         var contractinstance = myContract.at(this.contractaddress);
