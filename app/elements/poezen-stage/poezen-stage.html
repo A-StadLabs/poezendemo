@@ -190,11 +190,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   pincode="{{pincode}}"
   id="lomqtt"></lo-mqtt>
 
-  <poes-contract id="poescontract" web3="{{web3}}" account="{{account}}" contract="LocalsMembership.json" globalkeystore="{{globalkeystore}}" memberstatus="{{memberstatus}}" contractaddress="b3be2005a60ec4272bdb89de03d36ad1fa06cef5">
+  <poes-contract id="poescontract" web3="{{web3}}" account="{{account}}" contract="LocalsMembership.json" memberstatus="{{memberstatus}}" on-contract-ready="_poescontractready">
 
     </poes-contract>
     
-    <alabs-web3js on-web3-ready="_web3_ready" id="web3" web3="{{web3}}" accounts="{{accounts}}" account="{{account}}" contract="{{contract}}" balance="{{balance}}" connected="{{web3connected}}" globalkeystore="{{globalkeystore}}" provider="http://localhost:8545"></alabs-web3js>
+    <alabs-web3js on-web3-ready="_web3_ready" id="alabsweb3" web3="{{web3}}" accounts="{{accounts}}" account="{{account}}" balance="{{balance}}" connected="{{web3connected}}" provider="http://node1.ma.cx:8545"></alabs-web3js>
 
     <div class="container">
 
@@ -423,9 +423,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _web3_ready: function(){
-        console.log("WEB3");
-        this.$.poescontract._web3();
+        console.log("poezen stage : WEB3 is ready !",this.$.alabsweb3.balance);
+//        console.log('membership=',this.$.poescontract.membershipStatus());
         //this.memberstatus = this.$.poescontract.membershipStatus(this.account);
+      },
+
+      _poescontractready: function(){
+        console.log('poezen contract is klaar');
+//        console.log('membership=',this.$.poescontract.membershipStatus());
       },
 
       initpoes: function(){

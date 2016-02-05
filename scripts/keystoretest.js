@@ -6,14 +6,14 @@ var myArgs = require('optimist').argv;
 var HookedWeb3Provider = require("hooked-web3-provider");
 var contract = require('../app/contracts/LocalsMembership.json');
 
-var poezencontract = "0x65e7e77fa70f408257f1d9f3d3e8e20485ac5589";
+var host = "http://node1.ma.cx:8545";
+
+var poezencontract = "0x83883514f7fcb0cf627829d067f0e8488201f6b9";
 
 var global_keystore;
 var account;
 var web3;
 var web3_monitor;
-
-var commands = ['balances', 'sendether'];
 
 if (!fs.existsSync(keystoreFile)) {
 
@@ -52,7 +52,7 @@ if (!fs.existsSync(keystoreFile)) {
 
 	web3 = new Web3();
 	var provider = new HookedWeb3Provider({
-		host: "http://localhost:8545",
+		host: host,
 		transaction_signer: global_keystore
 	});
 	web3.setProvider(provider);
@@ -60,7 +60,7 @@ if (!fs.existsSync(keystoreFile)) {
 
 
 	web3_monitor = new Web3();
-	web3_monitor.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
+	web3_monitor.setProvider(new web3.providers.HttpProvider(host));
 
 	var gasPrice;
 
@@ -72,12 +72,13 @@ if (!fs.existsSync(keystoreFile)) {
 		console.log(myArgs._[0]);
 		var command = myArgs._[0];
 		switch (command) {
+			default: monitorBalances(myArgs._[0], true);
+			break;
 			case "balances":
-			default:
-				showBalances();
+					showBalances(myArgs._[1]);
 				break;
 			case "deploycontract":
-				console.log(contract.bytecode);
+					console.log(contract.bytecode);
 				var MyContract = web3.eth.contract(contract.abi);
 				var contractInstance = MyContract.new({
 					from: account,
@@ -93,11 +94,12 @@ if (!fs.existsSync(keystoreFile)) {
 
 						// e.g. check tx hash on the first call (transaction send)
 						if (!myContract.address) {
-							console.log(myContract.transactionHash) // The hash of the transaction, which deploys the contract
-
+							console.log("Your contract has been deployed to the Ethereum network. Transaction hash is", myContract.transactionHash);
+							console.log("Wait a new moments while we mine it. You will receive your address when it is mined.");
 							// check address on the second call (contract deployed)
 						} else {
-							console.log(myContract.address) // the contract address
+							console.log("Your contract has been deployed. Your contract address is", myContract.address);
+							//							console.log(myContract.address) // the contract address
 						}
 					} else {
 						console.log('error:', err);
@@ -106,22 +108,21 @@ if (!fs.existsSync(keystoreFile)) {
 				break;
 			case "addmember":
 				// creation of contract object
-				var MyContract = web3.eth.contract(contract.abi);
+					var MyContract = web3.eth.contract(contract.abi);
 				var myContractInstance = MyContract.at(poezencontract);
 
 				var options = {
 					from: account,
-//					to: poezencontract,
-					value: 4 * 1e18,
+					value: 6 * 1e18,
 					gas: 3141590,
 					gasPrice: gasPrice,
 					nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
 				};
 
-				var newMember = '0x' + global_keystore.getAddresses()[2];
+				var newMember = '0x' + myArgs._[1] || global_keystore.getAddresses()[2];
 
-				console.log('adding member ',newMember);
-				console.log('contract options',options);
+				console.log('adding member ', newMember);
+				console.log('contract options', options);
 
 
 				var result = myContractInstance.addMember.sendTransaction(newMember, options,
@@ -132,18 +133,22 @@ if (!fs.existsSync(keystoreFile)) {
 						} else {
 							console.log("Transaction Successful!");
 							console.log(result);
-							monitorBalances();
+							monitorBalances(newMember);
 						}
 					}
 				);
 				break;
 			case "transfer":
 
-				var to = global_keystore.getAddresses()[1];
+					var to = myArgs._[1] || global_keystore.getAddresses()[1];
+				var amount = 10 * 1e18;
+				console.log("Transferring ", amount, "wei from", account, 'to', to);
+
+
 				var options = {
 					from: account,
 					to: to,
-					value: 1000000000000000000,
+					value: amount,
 					gas: 3141590,
 					gasPrice: gasPrice,
 					nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
@@ -157,36 +162,9 @@ if (!fs.existsSync(keystoreFile)) {
 					} else {
 						console.log("Transaction Successful!");
 						console.log(result);
-						monitorBalances();
+						monitorBalances(to);
 					}
 				});
-				/*
-
-								global_keystore.signTransaction(txOptions, function(err, signedTx) {
-									console.log(err);
-									console.log(signedTx);
-									//        expect(signedTx.slice(2)).to.equal(fixtures.valid[0].rawSignedTx)
-
-
-									web3.eth.sendRawTransaction(signedTx, function(err, txhash) {
-										console.log('error: ' + err);
-										console.log('txhash: ' + txhash);
-									});
-
-								});
-
-				*/
-
-				/*
-								var t = lightwallet.txutils.valueTx(txOptions);
-								console.log(t);
-
-								var signedTx = global_keystore.signTx(t, 'testing', account);
-								console.log(signedTx);
-
-
-				*/
-
 				break;
 
 		}
@@ -194,30 +172,36 @@ if (!fs.existsSync(keystoreFile)) {
 
 }
 
-function monitorBalances() {
-	setInterval(showBalances, 2000);
+function monitorBalances(extraAccount, onlyThisOne) {
+	setInterval(function() {
+		showBalances(extraAccount, onlyThisOne);
+	}, 2000);
 }
 
-function showBalances() {
+function showBalances(extraAccount, onlyThisOne) {
+
+	var accountsToShow = global_keystore.getAddresses().slice(0);
+	if (extraAccount) {
+		console.log('monitoring extra account', extraAccount);
+		accountsToShow.push(extraAccount);
+	}
+	if (onlyThisOne && extraAccount) {
+		accountsToShow = [extraAccount];
+	}
 
 	if (poezencontract) {
-		// creation of contract object
 		var MyContract = web3.eth.contract(contract.abi);
-		// initiate contract for an address
 		var myContractInstance = MyContract.at(poezencontract);
-		//console.log('instance', myContractInstance);
 	}
 	console.log('----Balances of wallet----');
-	global_keystore.getAddresses().forEach(function(adress) {
-		var status = 0;
+	accountsToShow.forEach(function(adress) {
+		var result = "(no contract)";
+
 		if (myContractInstance) {
-			result = myContractInstance.membershipStatus('0x' + adress);
+			result = myContractInstance.membershipStatus('0x' + adress).toNumber(10);
 		}
 
 		var wei = web3_monitor.eth.getBalance(adress).toNumber(10);
-		console.log('Account', adress, 'has', wei / 1e18, 'ether - islid', result.toNumber(10));
+		console.log('Account', adress, 'has', wei / 1e18, 'ether - islid', result);
 	});
 }
-
-//this.account = this.global_keystore.getAddresses()[0];
-//this.globalkeystore = this.global_keystore;

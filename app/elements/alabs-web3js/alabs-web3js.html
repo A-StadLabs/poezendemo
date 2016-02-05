@@ -28,17 +28,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
   (function() {
-//
-    // Web 3 ethereum stuff
-    function web3connect(provider, fn){
-      if(typeof web3 !== 'undefined')
-        var web3 = new Web3(web3.currentProvider);
-      else
-        // set the provider you want from Web3.providers
-        var web3 = new Web3(new Web3.providers.HttpProvider(provider));
-        //console.log(web3);
-        fn(web3);
-    };
 
     Polymer({
       is: 'alabs-web3js',
@@ -96,55 +85,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           "testing");
         this.global_keystore.generateNewAddress("testing", 1);
         this.set('walletdata',this.global_keystore.serialize());
-        this.account = this.global_keystore.getAddresses()[0];
-        this.globalkeystore = this.global_keystore; 
-        this.web3connect();
-        this.fire('web3-ready');
+        this.configureWeb3();
       },      
 
       loadWallet: function(){
         console.log('👌 load the wallet',this.walletdata);
         this.global_keystore = new lightwallet.keystore().deserialize(this.walletdata);
         console.log('loaded keystore. Addressess',this.global_keystore.getAddresses());
+        this.configureWeb3();
+      },
+
+      configureWeb3: function(){
+
+
+        this.accounts = this.global_keystore.getAddresses();
         this.account = this.global_keystore.getAddresses()[0];
-        this.web3connect();   
-        this.globalkeystore = this.global_keystore;   
-        this.fire('web3-ready');
-      },
-
-      maakContract: function(code){
-
-        var self = this;
-
-        this.web3.eth.getGasPrice(function(err, result) {
-
-          var gasPrice = result;
-          var txOptions = {
-            gasPrice: gasPrice.toNumber(10),
-            gasLimit: 3000000,
-            value: 20000000,
-            nonce: 4,
-            data: code
-          };
-
-          var contractData = lightwallet.txutils.createContractTx( self.account, txOptions);
-          var signedTx = self.global_keystore.signTx(contractData.tx, 'testing', self.account);
-
-
-          self.lastcontractaddress = contractData.addr;
-
-          console.log('Signed Contract creation TX: ' + signedTx)
-          console.log('')
-          console.log('Contract Address: ' + contractData.addr)
-          console.log('')
-
-        });
-
-      },
-
-
-      web3connect: function(){
-      
+        
         var web3Provider = new HookedWeb3Provider({
           host: this.provider,
           transaction_signer: this.global_keystore
@@ -153,12 +109,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.web3 = new Web3();
         this.web3.setProvider(web3Provider);
 
-        this.balance = this.web3.fromWei(this.web3.eth.getBalance(this.account).toNumber(), 'ether');
+        this.globalkeystore = this.global_keystore;   
+        this.global_keystore.passwordProvider = function(callback) {
+            callback(null, 'testing')
+        };
 
+        this.balance = this.web3.fromWei(this.web3.eth.getBalance(this.account).toNumber(), 'ether');
         this.connected = true;
 
-      },
 
+        console.log('A-labs web3js. RPC host',this.provider);
+        console.log('A-labs web3js. base account for your transactions',this.account);
+        console.log('A-labs web3js. balance of account',this.balance);
+
+        this.fire('web3-ready');
+      },
 
       importAccount: function(){
         console.log("Import account activated");

@@ -28,11 +28,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'poes-contract',
 
       properties: {
-        foo: {
-          type: String,
-          value: 'poes-contract',
-          notify: true
-        },
         web3: {
           type: Object,
           observer: "_web3"
@@ -45,28 +40,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
           observer: "_balance"
         },
-        account: {
-
-        },
-        contract: {
-          type: String,
-          observer: "_contract"
-        },
-        contractaddress: {
-          type: String
-        },
         globalkeystore: {
           type: Object,
           observer: "_keystore"
         },
+        account: {
+          type:String
+        },
         memberstatus: {
           type: Number,
           notify:true
+        },
+        contractaddress: {
+          type: String,
+          value: "0x83883514f7fcb0cf627829d067f0e8488201f6b9"
         }
       },
 
       ready: function() {
-
+        this.contracturl = this.resolveUrl('../../contracts/' + this.contract);
+        console.log("Got contract! ", JSON.stringify(this.contractjson));
+        this.fire('contract-ready');
       },
 
       _web3: function() {
@@ -77,13 +71,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _balance: function() {
         console.log("current balance for account ", this.account, ": ", this.balance);
-      },
-
-      _contract: function() {
-        console.log('YOOOOO');
-        this.contracturl = this.resolveUrl('../../contracts/' + this.contract);
-        console.log("Got contract! ", JSON.stringify(this.contractjson));
-        this.fire('contract-ready');
       },
 
       handleResponse: function() {
@@ -108,6 +95,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       stichtNieuweClub : function(){
         console.log('maak een nieuwe club');
+        /*
             var self = this;
 
         this.web3.eth.getGasPrice(function(err, result) {
@@ -144,8 +132,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           });
 
+*/
 /*
-
           self.lastcontractaddress = contractData.addr;
 
           console.log('Signed Contract creation TX: ' + signedTx)
@@ -153,65 +141,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           console.log('Contract Address: ' + contractData.addr)
           console.log('')
 */
-        });
+        
       },
 
       addMember: function(newMemberAddress,cb) {
         var self = this;
 
-        var myContract = this.web3.eth.contract(self.contractjson.abi);
-        var contractinstance = myContract.at(self.contractaddress);
 
-        console.log('de inviter account=',self.account);
-        console.log('de newmember account=', newMemberAddress);
-        console.log('het contract adres=', self.contractaddress);
+        // creation of contract object
+        var MyContract = this.web3.eth.contract(contract.abi);
+        var myContractInstance = MyContract.at(poezencontract);
 
-/*
-        var r = contractinstance.membershipStatus('0x1d7ae02955135c2d29f0b66cdace63df134986d5');
-        console.log('result van MS=',r.toNumber(10));
+        var options = {
+          from: this.account,
+          value: 6 * 1e18,
+          gas: 3141590,
+          gasPrice: gasPrice,
+          nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+        };
+
+        var newMember = '0x' + newMemberAddress;
+
+        console.log('adding member ',newMember);
+        console.log('contract options',options);
 
 
-        this.web3.eth.getGasPrice(function(err, result) {
+        var result = myContractInstance.addMember.sendTransaction(newMember, options,
+          function(err, result) {
+            if (err != null) {
+              console.log(err);
+              console.log("ERROR: Transaction didn't go through. See console.");
+            } else {
+              console.log("Transaction Successful!");
+              console.log(result);              
+            }
+          }
+        );
 
-        contractinstance.addMember('0x2b38d512d3f3cfef030c34bc9e5c697e9b095857',{ gasPrice: result.toNumber(10),value:6*1e18,gas:3000000,from:self.account},function(err){
-          console.log('yow');
-        });
-});*/
-
-        contractinstance.MemberAdded(function(err,res){
-          console.log('MEMBERADDED SUSKE');
+        myContractInstance.MemberAdded(function(err,res){
+          console.log('MEMBERADDED triggered SUSKE');
           console.log('err',err);
           console.log('res',res);
-        });
-
-        this.web3.eth.getGasPrice(function(err, result) {
-
-          var gasPrice = result.toNumber(10);
-          var txOptions = {
-            gasPrice: gasPrice,
-            gasLimit: 3000000,
-            value: 6 * 1e18,
-            nonce: 30000,
-            to: self.contractaddress
-          };
-
-          //console.log("ABI: ", self.globalkeystore);
-
-          var maaklidTx = lightwallet.txutils.functionTx(self.contractjson.abi, 'addMember', [ '0x' +newMemberAddress], txOptions);
-          var signedRegisterTx = self.globalkeystore.signTx(maaklidTx, 'testing', self.account)
-
-          // inject signedRegisterTx into the network...
-          console.log('Signed register key TX: ' + signedRegisterTx);
-
-          self.web3.eth.sendRawTransaction(signedRegisterTx
-          , function(err, txhash) {
-            console.log('error: ' + err);
-            console.log('txhash: ' + txhash);
-            if (cb){
-              cb(err,txhash);
-            }
-          });
-
         });
 
       }

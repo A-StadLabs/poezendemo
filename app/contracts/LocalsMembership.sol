@@ -21,10 +21,10 @@
     function addMember(address newMember) returns (uint returnCode) {
         if (members[msg.sender] != 1) return 2;
         if (members[newMember] == 1) return 3;
-        if (msg.value < price){
+        if (msg.value >= price){
             members[newMember] = 1;
             newMember.send(msg.value/2);
-            //msg.sender.send(msg.value/2);
+            msg.sender.send(msg.value/2);
             MemberAdded(msg.sender, newMember);
             return 1;
         }else{
