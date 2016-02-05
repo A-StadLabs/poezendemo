@@ -58,7 +58,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       ready: function() {
-        this.contracturl = this.resolveUrl('../../contracts/' + this.contract);
+        this.contracturl = this.resolveUrl('../../contracts/LocalsMembership.json');
         console.log("Got contract! ", JSON.stringify(this.contractjson));
         this.fire('contract-ready');
       },
@@ -148,42 +148,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var self = this;
 
 
-        // creation of contract object
-        var MyContract = this.web3.eth.contract(contract.abi);
-        var myContractInstance = MyContract.at(poezencontract);
+        this.web3.eth.getGasPrice(function(err, result) {
 
-        var options = {
-          from: this.account,
-          value: 6 * 1e18,
-          gas: 3141590,
-          gasPrice: gasPrice,
-          nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
-        };
+          var gasPrice = result.toNumber(10);
 
-        var newMember = '0x' + newMemberAddress;
+              // creation of contract object
+              var MyContract = self.web3.eth.contract(self.contractjson.abi);
+              var myContractInstance = MyContract.at(self.contractaddress);
 
-        console.log('adding member ',newMember);
-        console.log('contract options',options);
+              var options = {
+                from: self.account,
+                value: 6 * 1e18,
+                gas: 3141590,
+                gasPrice: gasPrice,
+                nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+              };
+
+              var newMember = '0x' + newMemberAddress;
+
+              console.log('adding member ',newMember);
+              console.log('contract options',options);
 
 
-        var result = myContractInstance.addMember.sendTransaction(newMember, options,
-          function(err, result) {
-            if (err != null) {
-              console.log(err);
-              console.log("ERROR: Transaction didn't go through. See console.");
-            } else {
-              console.log("Transaction Successful!");
-              console.log(result);              
-            }
-          }
-        );
+              var result = myContractInstance.addMember.sendTransaction(newMember, options,
+                function(err, result) {
+                  if (err != null) {
+                    console.log(err);
+                    console.log("ERROR: Transaction didn't go through. See console.");
+                  } else {
+                    console.log("Transaction Successful!");
+                    console.log(result);              
+                  }
+                }
+              );
 
-        myContractInstance.MemberAdded(function(err,res){
-          console.log('MEMBERADDED triggered SUSKE');
-          console.log('err',err);
-          console.log('res',res);
-        });
-
+              myContractInstance.MemberAdded(function(err,res){
+                console.log('MEMBERADDED triggered SUSKE');
+                console.log('err',err);
+                console.log('res',res);
+              });
+      });
       }
     });
   })();
