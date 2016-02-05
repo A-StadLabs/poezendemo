@@ -89,6 +89,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
 
+      .XLbtn {
+        font-size: 40px;
+      }
+
 
     .paper-input-container-0 label, paper-input-char-counter, .paper-input-container-0 input {
     font-family: 'Indie Flower', cursive;
@@ -167,6 +171,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       width: 100%;
       height: 100%;
     }
+
+
+    .getuigen {
+      width: 350px;
+      margin: 40px 0px 0px 0px;
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+    }
+
+    .poesgetuige {
+      width: 100%;
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+      overflow: hidden;
+/*      background-color: rgba(0,0,0,0.05);*/
+      box-sizing:border-box;
+      padding: 5px 20px 5px 20px;
+      margin-bottom: 5px;
+    }
+
+    .poesgetuige img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0px 0px 0px 0px;
+    }
+
+
+    .poesgetuige h1 {
+      margin: 0px;
+      font-size: 30px;
+    }
+
+
+    .empty {
+      opacity: 0.25;
+    }
+
+
+    .whitespace {
+      visibility: hidden;
+      height: 50px;
+    }
+
 
     </style>
     
@@ -320,9 +368,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="biggercanvas">
           <poes-aai catnumber="{{poesinit}}"></poes-aai>
             <h2><span>{{poezennaam}}</span></h2>
+        <div class="getuigen">
+            <template is="dom-if" if="{{!validatedPussy}}">
+            <div class="poesgetuige">
+              <img src="../../images/poezen/empty-poes-01.png">
+              <h1 class="empty">Validator 1</h1>
+            </div>
+            <div class="poesgetuige">
+              <img src="../../images/poezen/empty-poes-01.png">
+              <h1 class="empty">Validator 2</h1>
+            </div>
+            </template>
+
+            <template is="dom-if" if="{{validatedPussy}}">
+            <div class="poesgetuige">
+  <!--             <img src="../../images/poezen/empty-poes-01.png"> -->
+              <h1 class="empty">invullen!</h1>
+            </div>
+            </template>
+          </div>
+
+                    <div class="whitespace"></div>
+
           <template is="dom-if" if="{{!validatedPussy}}">
-            <paper-button on-tap="enterValidationpin">Valideer mijn poes!</paper-button>
+            <paper-button on-tap="enterValidationpin" class="XLbtn">Valideer mijn poes!</paper-button>
           </template>
+          <div class="whitespace"></div>
+  
+
+
           <template is="dom-if" if="{{validatedPussy}}">
             <paper-button on-tap="toonPincode">Pincode</paper-button>
           </template>
@@ -417,6 +491,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         validatedPussy: {
           type: Boolean,
           value: false
+        },
+        contractaddress: {
+          type: String,
+          observer: "_contractaddress"
         }
 
       },
@@ -500,7 +578,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       receivedPin2: function(){
         // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
         //this.$.poezenpages.selected = 4;
-        this.$.lomqtt.send(this.enteredpin2, "validate"+"|"+this.pincode+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam, 2);
+        this.$.lomqtt.send(this.enteredpin2, "validate"+"|"+this.pincode+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam+"|"+this.contractaddress, 2);
       },
 
       receivedCat: function(){
@@ -542,14 +620,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.nonmembername = commandarray[2];
           this.askeraccount = commandarray[1];
           break;
+
           case "validate":
           console.log("Meneerke wil zijn poes laten valideren");
           this.incomingpussyname = commandarray[3];
           this.incomingpin = commandarray[1];
           this.incomingmember = commandarray[4];
+
+          this.contractaddresstowrite = commandarray[5];
+
+          
+
           this.incomingpussypic = "../../images/poezen/poes"+commandarray[2]+".png";
           this.$.poezenpages.selected = 9;
           break;
+          
           case "validatedone":
           console.log("Validatie is done!");
           this.$.poezenpages.selected = 6;
@@ -560,21 +645,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       validatePussy: function(){
         // voer contract uit en stuur ne message terug naar de user dat zijn pussy validated is.
+        this.$.poesvalidatie.addValidation(this.contractaddresstowrite);
         this.$.lomqtt.send(this.incomingpin, "validatedone"+"|"+this.account+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam, 2);
         this.$.poezenpages.selected = 6;
       },
 
       _memberstatus: function(){
-        console.log('KOMTIEEEEEE' , this.memberstatus);
+        console.log('KOMTIEEEEEE' , this.memberstatus, " poes init: ", this.poesinit);
         if(this.memberstatus === 1 && !this.poesinit){
           this.$.poezenpages.selected = 4; 
         }
 
          if(this.memberstatus === 1 && this.poesinit){
           this.$.poezenpages.selected = 6; 
-        } else {
+        } 
+
+        if(this.memberstatus === 0){
           this.$.poezenpages.selected = 0;
         }
+        
       },
 
       initmember: function(){
@@ -585,6 +674,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       shavePussy: function(){
         console.log("Maak nu contract aan met deze pussie");
+        this.$.poesvalidatie.createContract();
         this.$.poezenpages.selected = 6;
       },
 
