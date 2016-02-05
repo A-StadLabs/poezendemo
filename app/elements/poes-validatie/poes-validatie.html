@@ -57,7 +57,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         validations: {
           type:Number,
-          notify:true
+          notify:true,
+          observer: "_validations"
         }
       },
 
@@ -254,6 +255,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 console.log('res',res);
               });
       });
+      },
+
+      _validations: function(){
+        console.log("validations changed: ",this.validations);
       }
     });
   })();
