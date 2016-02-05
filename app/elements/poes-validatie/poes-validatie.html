@@ -19,7 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        handle-as="json"
        on-response="handleResponse"
        last-response="{{response}}"></iron-ajax>
-         
+
     <iron-localstorage name="poes-validatiecontract" value="{{contractaddress}}"></iron-localstorage>
   </template>
   <script>
@@ -54,6 +54,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           observer: "_hascontractaddress",
           notify:true
+        },
+        validations: {
+          type:Number,
+          notify:true
         }
       },
 
@@ -74,44 +78,105 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (this.web3 && this.contractjson && this.account) {
           if (!this.contractaddress) {
             console.log('poezen-validatie: ik heb geen contract');
-
-            var self = this;
-            this.web3.eth.getGasPrice(function(err, result) {
-              var gasPrice = result.toNumber(10);
-
-              var MyContract = self.web3.eth.contract(self.contractjson.abi);
-              var contractInstance = MyContract.new({
-                from: self.account,
-                gasPrice: gasPrice,
-                gasLimit: 3000000,
-                gas: 2000000,
-                nonce: 4,
-                data: self.contractjson.bytecode
-              }, function(err, myContract) {
-                if (!err) {
-                  // NOTE: The callback will fire twice!
-                  // Once the contract has the transactionHash property set and once its deployed on an address.
-
-                  // e.g. check tx hash on the first call (transaction send)
-                  if (!myContract.address) {
-                    console.log("Your contract has been deployed to the Ethereum network. Transaction hash is", myContract.transactionHash);
-                    console.log("Wait a new moments while we mine it. You will receive your address when it is mined.");
-                    // check address on the second call (contract deployed)
-                  } else {
-                    console.log("Your contract has been deployed. Your contract address is", myContract.address);
-                    self.contractaddress = myContract.address;
-                  }
-                } else {
-                  console.log('error:', err);
-                }
-              });
-
-            });
-
-          }else{
-            console.log('poezen-validatie: ik HEB een contract',this.contractaddress);
+          } else {
+            console.log('poezen-validatie: ik HEB een contract', this.contractaddress);
+            console.log('begin te luisteren');
+            this._getValidations();
           }
         }
+      },
+
+      _getValidations: function(){
+        var myContract = this.web3.eth.contract(this.contractjson.abi);
+        var contractinstance = myContract.at(this.contractaddress);
+        this.validations = contractinstance.countValidations().toNumber(10);
+        console.log('aantal validations=',this.validations);
+      },
+
+      addValidation: function(validatorAddress){
+        this.web3.eth.getGasPrice(function(err, result) {
+
+          var gasPrice = result.toNumber(10);
+
+              // creation of contract object
+              var MyContract = self.web3.eth.contract(self.contractjson.abi);
+              var myContractInstance = MyContract.at(self.contractaddress);
+
+              var options = {
+                from: self.account,
+                value: 3.5 * 1e18,
+                gas: 3141590,
+                gasPrice: gasPrice,
+                nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+              };
+
+              var newMember = '0x' + validatorAddress;
+
+              console.log('validating member ',validatorAddress);
+              console.log('contract options',options);
+
+
+              var result = myContractInstance.addValidation.sendTransaction(options,
+                function(err, result) {
+                  if (err != null) {
+                    console.log(err);
+                    console.log("ERROR: Transaction didn't go through. See console.");
+                  } else {
+                    console.log("Transaction Successful!");
+                    console.log(result);              
+                  }
+                }
+              );
+
+              myContractInstance.ValidationAdded(function(err,res){
+
+                //self.memberstatus = 1;
+
+                console.log('ValidationAdded triggered SUSKE');
+                console.log('err',err);
+                console.log('res',res);
+
+                this._getValidations();
+
+              });
+      });
+
+      },
+
+      createContract: function() {
+
+        var self = this;
+        this.web3.eth.getGasPrice(function(err, result) {
+          var gasPrice = result.toNumber(10);
+
+          var MyContract = self.web3.eth.contract(self.contractjson.abi);
+          var contractInstance = MyContract.new({
+            from: self.account,
+            gasPrice: gasPrice,
+            gasLimit: 3000000,
+            gas: 2000000,
+            nonce: 4,
+            data: self.contractjson.bytecode
+          }, function(err, myContract) {
+            if (!err) {
+              // NOTE: The callback will fire twice!
+              // Once the contract has the transactionHash property set and once its deployed on an address.
+
+              // e.g. check tx hash on the first call (transaction send)
+              if (!myContract.address) {
+                console.log("Your contract has been deployed to the Ethereum network. Transaction hash is", myContract.transactionHash);
+                console.log("Wait a new moments while we mine it. You will receive your address when it is mined.");
+                // check address on the second call (contract deployed)
+              } else {
+                console.log("Your contract has been deployed. Your contract address is", myContract.address);
+                self.contractaddress = myContract.address;
+                this._initcontract();
+              }
+            } else {
+              console.log('error:', err);
+            }
+          });
+        });
       },
 
       _web3: function() {
