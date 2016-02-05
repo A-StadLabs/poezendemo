@@ -329,7 +329,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
-
       <!-- Dit is het schermpje waar je kan kiezen of iemand lid wordt of niet -->
       <neon-animatable>
         <div class="biggercanvas">
@@ -339,6 +338,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
+
        <!-- Aanvraag poesvalidatie -->
       <neon-animatable>
         <div class="canvas">
@@ -347,14 +347,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <label class="centertexting">pincode</label>
             <input autofocus class="centertexting" is="iron-input" prevent-invalid-input bind-value="{{enteredpin2}}">
           </paper-input-container>
+          <div class="layout horizontal center">
+          <paper-button on-tap="backtopuss">Terug</paper-button>
           <paper-button on-tap="receivedPin2">OK</paper-button>
+        </div>
         </div>
       </neon-animatable>
 
       <!-- Dit is het schermpje waar je kan kiezen of je een poes wil valideren of niet -->
       <neon-animatable>
         <div class="biggercanvas">
-          <h3><span>{{incomingmember}}</span> wil zijn poes<span>{{incomingpussyname}}</span> laten valideren</h3>
+          <h3><span>{{incomingmember}}</span> wil zijn poes <span>{{incomingpussyname}}</span>  laten valideren</h3>
           <div class="validatepuss">
           <img src="{{incomingpussypic}}">
           </div>
@@ -446,8 +449,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       initpoes: function(){
         console.log("Initializing poes");
+  
         this.$.poezenpages.selected = 4;
-
+  
       },
 
       mqttconnectedfire: function(){
@@ -456,7 +460,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       localpoes: function(){
-
         this.$.poezenpages.selected = 6;
         console.log("I haz a puss, ", this.poesinit);
       },
@@ -563,8 +566,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _memberstatus: function(){
         console.log('KOMTIEEEEEE' , this.memberstatus);
-        if(this.memberstatus === 1){
+        if(this.memberstatus === 1 && !this.poesinit){
           this.$.poezenpages.selected = 4; 
+        }
+
+         if(this.memberstatus === 1 && this.poesinit){
+          this.$.poezenpages.selected = 6; 
         } else {
           this.$.poezenpages.selected = 0;
         }
@@ -578,6 +585,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       shavePussy: function(){
         console.log("Maak nu contract aan met deze pussie");
+        this.$.poezenpages.selected = 6;
+      },
+
+      backtopuss: function(){
         this.$.poezenpages.selected = 6;
       }
 
