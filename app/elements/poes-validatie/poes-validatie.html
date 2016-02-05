@@ -83,10 +83,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             console.log('poezen-validatie: ik HEB een contract', this.contractaddress);
             console.log('begin te luisteren');
             this._getValidations();
+
+            var MyContract = this.web3.eth.contract(this.contractjson.abi);
+            var myContractInstance = MyContract.at(validatorAddress);
+            myContractInstance.ValidationAdded(function(err, res) {
+
+              console.log('ValidationAdded triggered SUSKE');
+              console.log('err', err);
+              console.log('res', res);
+
+              self._getValidations();
+
+            });
           }
         }
       },
-
+      
       _getValidations: function(){
         var myContract = this.web3.eth.contract(this.contractjson.abi);
         var contractinstance = myContract.at(this.contractaddress);
