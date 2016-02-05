@@ -275,7 +275,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   pincode="{{pincode}}"
   id="lomqtt"></lo-mqtt>
 
-    <poes-validatie id="poesvalidatie" web3="{{web3}}" account="{{account}}" contractaddress="{{contractaddress}}"></poes-validatie>
+    <poes-validatie id="poesvalidatie" web3="{{web3}}" account="{{account}}" contractaddress="{{contractaddress}}" validations="{{validations}}"></poes-validatie>
 
   <poes-contract id="poescontract" web3="{{web3}}" account="{{account}}" contract="LocalsMembership.json" memberstatus="{{memberstatus}}" on-contract-ready="_poescontractready">
     </poes-contract>
@@ -407,13 +407,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="biggercanvas">
           <poes-aai catnumber="{{poesinit}}"></poes-aai>
             <h2><span>{{poezennaam}}</span></h2>
+            <p>Validations: <span>{{validations}}</span></p>
         <div class="getuigen">
-        <template is="dom-repeat" items="{{validations}}">
             <div class="poesgetuige">
               <img src="../../images/poezen/empty-poes-01.png">
               <h1 class="empty">Validator 1</h1>
             </div>
-          </template>
         
 
             <template is="dom-if" if="{{validatedPussy}}">

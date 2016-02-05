@@ -83,10 +83,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             console.log('poezen-validatie: ik HEB een contract', this.contractaddress);
             console.log('begin te luisteren');
             this._getValidations();
+
+            var MyContract = this.web3.eth.contract(this.contractjson.abi);
+            var myContractInstance = MyContract.at(validatorAddress);
+            myContractInstance.ValidationAdded(function(err, res) {
+
+              console.log('ValidationAdded triggered SUSKE');
+              console.log('err', err);
+              console.log('res', res);
+
+              self._getValidations();
+
+            });
           }
         }
       },
-
+      
       _getValidations: function(){
         var myContract = this.web3.eth.contract(this.contractjson.abi);
         var contractinstance = myContract.at(this.contractaddress);
@@ -94,55 +106,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log('aantal validations=',this.validations);
       },
 
-      addValidation: function(validatorAddress){
+      addValidation: function(validatorAddress) {
         var self = this;
         this.web3.eth.getGasPrice(function(err, result) {
 
           var gasPrice = result.toNumber(10);
 
-              // creation of contract object
-              var MyContract = self.web3.eth.contract(self.contractjson.abi);
-              var myContractInstance = MyContract.at(self.contractaddress);
+          // creation of contract object
+          var MyContract = self.web3.eth.contract(self.contractjson.abi);
+          var myContractInstance = MyContract.at(validatorAddress);
 
-              var options = {
-                from: self.account,
-                value: 3.5 * 1e18,
-                gas: 3141590,
-                gasPrice: gasPrice,
-                nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
-              };
+          var options = {
+            from: self.account,
+            value: 3.5 * 1e18,
+            gas: 3141590,
+            gasPrice: gasPrice,
+            nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+          };
 
-              var newMember = '0x' + validatorAddress;
-
-              console.log('validating member ',validatorAddress);
-              console.log('contract options',options);
+          console.log('contract to validate ', validatorAddress);
+          console.log('contract options', options);
 
 
-              var result = myContractInstance.addValidation.sendTransaction(options,
-                function(err, result) {
-                  if (err != null) {
-                    console.log(err);
-                    console.log("ERROR: Transaction didn't go through. See console.");
-                  } else {
-                    console.log("Transaction Successful!");
-                    console.log(result);              
-                  }
-                }
-              );
+          var result = myContractInstance.addValidation.sendTransaction(options,
+            function(err, result) {
+              if (err != null) {
+                console.log(err);
+                console.log("ERROR: Transaction didn't go through. See console.");
+              } else {
+                console.log("Transaction Successful!");
+                console.log(result);
+              }
+            }
+          );
 
-              myContractInstance.ValidationAdded(function(err,res){
+          myContractInstance.ValidationAdded(function(err, res) {
 
-                //self.memberstatus = 1;
+            console.log('ValidationAdded triggered SUSKE');
+            console.log('err', err);
+            console.log('res', res);
 
-                console.log('ValidationAdded triggered SUSKE');
-                console.log('err',err);
-                console.log('res',res);
+            self._getValidations();
 
-                this._getValidations();
-
-              });
-      });
-
+          });
+        });
       },
 
       createContract: function() {
