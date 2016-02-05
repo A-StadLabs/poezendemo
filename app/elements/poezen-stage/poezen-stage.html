@@ -369,16 +369,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <poes-aai catnumber="{{poesinit}}"></poes-aai>
             <h2><span>{{poezennaam}}</span></h2>
         <div class="getuigen">
-            <template is="dom-if" if="{{!validatedPussy}}">
+        <template is="dom-repeat" items="{{validations}}">
             <div class="poesgetuige">
               <img src="../../images/poezen/empty-poes-01.png">
               <h1 class="empty">Validator 1</h1>
             </div>
-            <div class="poesgetuige">
-              <img src="../../images/poezen/empty-poes-01.png">
-              <h1 class="empty">Validator 2</h1>
-            </div>
-            </template>
+          </template>
+        
 
             <template is="dom-if" if="{{validatedPussy}}">
             <div class="poesgetuige">
