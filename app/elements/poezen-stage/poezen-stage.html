@@ -417,6 +417,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         validatedPussy: {
           type: Boolean,
           value: false
+        },
+        contractaddress: {
+          type: String,
+          observer: "_contractaddress"
         }
 
       },
@@ -500,7 +504,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       receivedPin2: function(){
         // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
         //this.$.poezenpages.selected = 4;
-        this.$.lomqtt.send(this.enteredpin2, "validate"+"|"+this.pincode+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam, 2);
+        this.$.lomqtt.send(this.enteredpin2, "validate"+"|"+this.pincode+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam+"|"+this.contractaddress, 2);
       },
 
       receivedCat: function(){
@@ -542,14 +546,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.nonmembername = commandarray[2];
           this.askeraccount = commandarray[1];
           break;
+
           case "validate":
           console.log("Meneerke wil zijn poes laten valideren");
           this.incomingpussyname = commandarray[3];
           this.incomingpin = commandarray[1];
           this.incomingmember = commandarray[4];
+
+          this.contractaddresstowrite = commandarray[5];
+
+          this.$.poesvalidatie.addValidation(this.contractaddresstowrite);
+
           this.incomingpussypic = "../../images/poezen/poes"+commandarray[2]+".png";
           this.$.poezenpages.selected = 9;
           break;
+          
           case "validatedone":
           console.log("Validatie is done!");
           this.$.poezenpages.selected = 6;
@@ -585,6 +596,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       shavePussy: function(){
         console.log("Maak nu contract aan met deze pussie");
+        this.$.poesvalidatie.createContract();
         this.$.poezenpages.selected = 6;
       },
 
