@@ -93,57 +93,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return r.toNumber(10);
       },
 
-      stichtNieuweClub : function(){
-        console.log('maak een nieuwe club');
-        /*
-            var self = this;
-
-        this.web3.eth.getGasPrice(function(err, result) {
-
-          var gasPrice = result;
-          var txOptions = {
-            gasPrice: gasPrice.toNumber(10),
-            gasLimit: 3000000,
-            value: 3*1e18,
-            nonce: new Date().getTime(),
-            data: self.contractjson.bytecode
-          };
-          console.log('de txoptions van jouw nieuwe club is ',txOptions);
-          var contractData = lightwallet.txutils.createContractTx( self.account, txOptions);
-          console.log('de createContractTx van jouw nieuwe club is ',contractData);
-
-          var signedTx = self.globalkeystore.signTx(contractData.tx, 'testing', self.account);
-          console.log('de signTx van jouw nieuwe club is ',signedTx);
-
-
-          self.web3.eth.sendRawTransaction(signedTx
-          , function(err, txhash) {
-            console.log('error: ' + err);
-            console.log('txhash: ' + txhash);          
-
-            if (!err){
-              console.log('de nieuwe club van account ',self.account,' heeft contractid ',contractData.addr);
-              self.contractaddress = contractData.addr;
-            }else{
-              console.log('je nieuwe club kan niet worden gemaakt. jammer...');
-            }
-
-            console.log('okee?');
-
-          });
-
-*/
-/*
-          self.lastcontractaddress = contractData.addr;
-
-          console.log('Signed Contract creation TX: ' + signedTx)
-          console.log('')
-          console.log('Contract Address: ' + contractData.addr)
-          console.log('')
-*/
-        
-      },
-
       addMember: function(newMemberAddress,cb) {
         var self = this;
 
@@ -183,6 +132,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               );
 
               myContractInstance.MemberAdded(function(err,res){
+
+                self.memberstatus = 1;
+
                 console.log('MEMBERADDED triggered SUSKE');
                 console.log('err',err);
                 console.log('res',res);
