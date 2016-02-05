@@ -85,7 +85,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this._getValidations();
 
             var MyContract = this.web3.eth.contract(this.contractjson.abi);
-            var myContractInstance = MyContract.at(validatorAddress);
+            var myContractInstance = MyContract.at(this.contractaddress);
             myContractInstance.ValidationAdded(function(err, res) {
 
               console.log('ValidationAdded triggered SUSKE');
