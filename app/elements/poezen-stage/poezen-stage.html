@@ -629,7 +629,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           this.contractaddresstowrite = commandarray[5];
 
-          this.$.poesvalidatie.addValidation(this.contractaddresstowrite);
+          
 
           this.incomingpussypic = "../../images/poezen/poes"+commandarray[2]+".png";
           this.$.poezenpages.selected = 9;
@@ -645,21 +645,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       validatePussy: function(){
         // voer contract uit en stuur ne message terug naar de user dat zijn pussy validated is.
+        this.$.poesvalidatie.addValidation(this.contractaddresstowrite);
         this.$.lomqtt.send(this.incomingpin, "validatedone"+"|"+this.account+"|"+this.$.poezenselector.selected+"|"+this.poezennaam+"|"+this.baasjenaam, 2);
         this.$.poezenpages.selected = 6;
       },
 
       _memberstatus: function(){
-        console.log('KOMTIEEEEEE' , this.memberstatus);
+        console.log('KOMTIEEEEEE' , this.memberstatus, " poes init: ", this.poesinit);
         if(this.memberstatus === 1 && !this.poesinit){
           this.$.poezenpages.selected = 4; 
         }
 
          if(this.memberstatus === 1 && this.poesinit){
           this.$.poezenpages.selected = 6; 
-        } else {
+        } 
+
+        if(this.memberstatus === 0){
           this.$.poezenpages.selected = 0;
         }
+        
       },
 
       initmember: function(){
