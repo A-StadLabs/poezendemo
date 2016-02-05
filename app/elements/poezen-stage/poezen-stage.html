@@ -216,6 +216,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
 
+.draaierke img {
+  width: 100%;
+  height: 100%;
+}
+.draaierke {
+
+    width: 250px;
+    height: 250px;
+
+    -webkit-animation-name: rotate; 
+    -webkit-animation-duration: 1s; 
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: rotate; 
+    -moz-animation-duration: 1s; 
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    animation-name: rotate; 
+    animation-duration: 1s; 
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+@-webkit-keyframes rotate {
+    from {-webkit-transform: rotate(0deg);}
+    to {-webkit-transform: rotate(360deg);}
+}
+
+@-moz-keyframes rotate {
+    from {-moz-transform: rotate(0deg);}
+    to {-moz-transform: rotate(360deg);}
+}
+
+@keyframes rotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+
+
+
     </style>
     
 
@@ -439,6 +478,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </neon-animatable>
 
+
+
+      <!-- Dit is het schermpje wat je ziet als je op iets zit te wachten -->
+      <neon-animatable>
+        <div class="biggercanvas">
+          <img class="draaierke" src="../../images/poezen/poes1.png">
+          <div class="whitespace"></div>
+          <h3>Loading...</h3>
+        </div>
+      </neon-animatable>
+
+
+
     </neon-animated-pages>
     </div>
   </template>
@@ -497,7 +549,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       ready: function(){
-        // this.$.poezenpages.selected = 0;
+        this.$.poezenpages.selected = 10;
         this.entryAnimation = 'slide-from-right-animation';
         this.exitAnimation = 'slide-left-animation';
       },
@@ -568,8 +620,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       receivedPin: function(){
         // Me kunne me dan hie de pin (this.pincode) teruggekregen hebben dan iet doen;
-        //this.$.poezenpages.selected = 4;
         this.$.lomqtt.send(this.enteredpin, "membership"+"|"+this.account+"|"+this.baasjenaam, 2);
+        this.$.poezenpages.selected = 10;
+
       },
 
       receivedPin2: function(){
