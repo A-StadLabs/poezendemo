@@ -210,7 +210,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <p>Elke dag om 16u een stukje sponzige Sponny-cake, voor alle gevalideerde poezen!</p>
 
             <paper-button on-tap="gotoLidworden">Word lid van de poezenclub</paper-button>
-            <paper-button on-tap="toonPincode">Pincode</paper-button>
+            
           </div>
         </div>
       </neon-animatable>
@@ -310,7 +310,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <label class="centertexting">Kies een naam voor je poes</label>
               <input autofocus class="centertexting" is="iron-input" prevent-invalid-input bind-value="{{poezennaam}}">
             </paper-input-container>
-            <paper-button on-tap="gotoNext">OK</paper-button>
+            <paper-button on-tap="shavePussy">OK</paper-button>
           </div>
         </div>
       </neon-animatable>
@@ -320,7 +320,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="biggercanvas">
           <poes-aai catnumber="{{poesinit}}"></poes-aai>
             <h2><span>{{poezennaam}}</span></h2>
-          <paper-button on-tap="enterValidationpin">Valideer mijn poes!</paper-button>
+          <template is="dom-if" if="{{!validatedPussy}}">
+            <paper-button on-tap="enterValidationpin">Valideer mijn poes!</paper-button>
+          </template>
+          <template is="dom-if" if="{{validatedPussy}}">
+            <paper-button on-tap="toonPincode">Pincode</paper-button>
+          </template>
         </div>
       </neon-animatable>
 
@@ -404,9 +409,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         memberstatus: {
           type: Boolean,
           observer: "_memberstatus"
+        },
+
+        validatedPussy: {
+          type: Boolean,
+          value: false
         }
 
       },
+
       ready: function(){
         // this.$.poezenpages.selected = 0;
         this.entryAnimation = 'slide-from-right-animation';
@@ -525,7 +536,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           case "membership":
           console.log("Meneerke wil lid worden");
           this.$.poezenpages.selected = 7;
-          this.nonmembername = commandarray[1];
+          this.nonmembername = commandarray[2];
           this.askeraccount = commandarray[1];
           break;
           case "validate":
@@ -552,8 +563,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _memberstatus: function(){
         console.log('KOMTIEEEEEE' , this.memberstatus);
-        if(this.memberstatus && !this.poesinit){
+        if(this.memberstatus === 1){
           this.$.poezenpages.selected = 4; 
+        } else {
+          this.$.poezenpages.selected = 0;
         }
       },
 
@@ -561,6 +574,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // this.memberstatus = false;
         console.log('Ja ge hebt gene member, fantastisch');
         this.$.poezenpages.selected = 0; 
+      },
+
+      shavePussy: function(){
+        console.log("Maak nu contract aan met deze pussie");
+        this.$.poezenpages.selected = 6;
       }
 
     });

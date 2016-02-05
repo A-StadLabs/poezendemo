@@ -53,7 +53,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         contractaddress: {
           type: String,
-          value: "0x83883514f7fcb0cf627829d067f0e8488201f6b9"
+          value: "0x83883514f7fcb0cf627829d067f0e8488201f6b9",
+          observer: "_contractevent"
         }
       },
 
@@ -64,9 +65,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _web3: function() {
+        var self = this;
         console.log("poes contract kent web3js ", this.web3);
         console.log("contract adres van deze club=", this.contractaddress);
         this.balance = this.web3.fromWei(this.web3.eth.getBalance(this.account).toNumber(), 'ether');
+        // Start listening to contract state / event
+        if(this.contractjson){
+          console.log("Ik ken web3 EN ik ken contactjson");
+          var MyContract = self.web3.eth.contract(self.contractjson.abi);
+          var myContractInstance = MyContract.at(self.contractaddress);
+          myContractInstance.MemberAdded(function(err,res){
+            console.log('dees vergelijking doen: ',res.args.invitee, " vs ", self.account);
+            if(res.args.invitee=="0x"+self.account){
+              self.memberstatus = 1;
+            }
+          });
+        };
+        
       },
 
       _balance: function() {
@@ -75,8 +90,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       handleResponse: function() {
         this.contractjson = this.response;
+        this._web3();
         //this.stichtNieuweClub();
-        this.memberstatus = (this.membershipStatus() == 1 );
+        this.memberstatus = this.membershipStatus();
         console.log("IK BEN LID VAN DE CLUB=",this.memberstatus);
         //this.runContract();
       },
